@@ -636,8 +636,8 @@
     return ITEMS.indexOf(a) - ITEMS.indexOf(b);
   }
 
-  function card(it){
-    var mine = score(it) === 2;
+  function card(it, pick){
+    var mine = !!pick;
     return '<article class="card' + (mine ? " mine" : "") + '">'
       + '<div class="card-top">'
       +   '<span class="tag">' + it.catName + '</span>'
@@ -675,7 +675,12 @@
       state.cat === "all" ? "받을 수 있는 항목 전체" : labelOf(CATS, state.cat) + " 항목";
 
     var cardsHtml = "";
-    main.forEach(function(it){ cardsHtml += card(it); });
+    var picks = 0;
+    main.forEach(function(it){
+      var isPick = score(it) === 2 && picks < 2;
+      if (isPick) picks += 1;
+      cardsHtml += card(it, isPick);
+    });
     document.getElementById("cards").innerHTML = cardsHtml;
 
     var subBlock = document.getElementById("subBlock");
@@ -683,7 +688,7 @@
       subBlock.hidden = false;
       subItems.sort(byScore);
       var h = "";
-      subItems.forEach(function(it){ h += card(it); });
+      subItems.forEach(function(it){ h += card(it, false); });
       document.getElementById("subCards").innerHTML = h;
     } else {
       subBlock.hidden = true;
