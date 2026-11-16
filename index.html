@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>숨은 돈 10초 찾기 | 지원금·환급금 한 번에 확인</title>
+<meta name="description" content="로그인·설치 없이 3번만 누르면, 내가 받을 수 있는 숨은 지원금과 환급금을 정부 공식 사이트 바로가기로 정리해 드립니다.">
+<meta name="theme-color" content="#0F5F45">
+<meta property="og:title" content="숨은 돈 10초 찾기">
+<meta property="og:description" content="3번만 누르면 끝. 내가 받을 수 있는 지원금·환급금 공식 사이트 모음.">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --bg:#FAF6EF;
+    --paper:#FFFFFF;
+    --ink:#23282A;
+    --ink-soft:#5C6663;
+    --line:#E6DCCB;
+    --green:#0F5F45;
+    --green-dark:#0B4A36;
+    --gold:#B07C24;
+    --gold-bg:#FBF0D9;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
+    font-size:17px;
+    line-height:1.65;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:0 18px 40px;}
+
+  /* ── 상단 ───────────────────────────── */
+  header.hero{
+    background:linear-gradient(165deg,#0F5F45 0%,#12704F 55%,#15805C 100%);
+    color:#fff;
+    padding:30px 18px 26px;
+    border-bottom-left-radius:26px;
+    border-bottom-right-radius:26px;
+  }
+  .hero-in{max-width:480px;margin:0 auto;}
+  .kicker{
+    display:inline-block;
+    margin:0 0 14px;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:-.2px;
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.28);
+    padding:6px 12px;
+    border-radius:999px;
+  }
+  h1{
+    margin:0 0 12px;
+    font-size:33px;
+    line-height:1.28;
+    letter-spacing:-1.2px;
+    font-weight:800;
+  }
+  h1 .num{color:#FFE9A8;}
+  .hero p.lead{
+    margin:0;
+    font-size:16.5px;
+    line-height:1.6;
+    color:#E8F3EE;
+  }
+  .hero .facts{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:16px;
+    padding:0;
+    list-style:none;
+  }
+  .hero .facts li{
+    font-size:13.5px;
+    font-weight:700;
+    color:#DFF1E9;
+    background:rgba(0,0,0,.16);
+    border-radius:8px;
+    padding:5px 10px;
+  }
+
+  /* ── 진행 표시 ──────────────────────── */
+  .steps{margin-top:22px;}
+  .bar{
+    height:7px;
+    background:var(--line);
+    border-radius:99px;
+    overflow:hidden;
+  }
+  .bar span{
+    display:block;
+    height:100%;
+    width:33%;
+    background:var(--green);
+    border-radius:99px;
+    transition:width .28s ease;
+  }
+  .step-no{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:12px 0 4px;
+    font-size:14px;
+    font-weight:700;
+    color:var(--green);
+  }
+  .step-no .back{
+    background:none;border:0;
+    color:var(--ink-soft);
+    font-size:14px;
+    font-weight:700;
+    padding:6px 2px;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .step-no .back[hidden]{display:none;}
+  h2.q{
+    margin:2px 0 18px;
+    font-size:24px;
+    line-height:1.35;
+    letter-spacing:-.8px;
+    font-weight:800;
+  }
+  h2.q small{
+    display:block;
+    margin-top:6px;
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    letter-spacing:-.2px;
+  }
+
+  /* ── 선택 버튼 ──────────────────────── */
+  .opts{display:grid;gap:11px;}
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    width:100%;
+    min-height:72px;
+    padding:16px 18px;
+    background:var(--paper);
+    border:2px solid var(--line);
+    border-radius:var(--radius);
+    font-family:inherit;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:-.5px;
+    color:var(--ink);
+    text-align:left;
+    cursor:pointer;
+    transition:transform .12s ease, border-color .15s ease, background .15s ease;
+    box-shadow:0 1px 0 rgba(0,0,0,.03);
+  }
+  .opt:active{transform:scale(.985);background:#F3FAF6;border-color:var(--green);}
+  .opt .ic{
+    flex:0 0 auto;
+    width:34px;height:34px;
+    display:grid;place-items:center;
+    border-radius:11px;
+    background:#F1F6F3;
+    font-size:17px;
+  }
+  .opt .txt{flex:1 1 auto;line-height:1.35;}
+  .opt .txt em{
+    display:block;
+    margin-top:2px;
+    font-style:normal;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    letter-spacing:-.2px;
+  }
+  .opt .arw{color:#B9C4BF;font-size:19px;font-weight:400;}
+  .opt[aria-checked="true"]{
+    border-color:var(--green);
+    background:#F1F9F5;
+  }
+
+  /* ── 결과 ───────────────────────────── */
+  #result{margin-top:22px;}
+  .sum{
+    background:var(--paper);
+    border:2px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:20px;
+  }
+  .sum .picked{
+    font-size:14px;
+    color:var(--ink-soft);
+    font-weight:700;
+    letter-spacing:-.2px;
+    margin:0 0 6px;
+  }
+  .sum h2{
+    margin:0;
+    font-size:23px;
+    letter-spacing:-.8px;
+    font-weight:800;
+  }
+  .sum h2 b{color:var(--green);font-size:27px;}
+  .sum .retry{
+    margin-top:14px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:#F1F6F3;
+    border:1.5px solid #CFE3D8;
+    color:var(--green-dark);
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    padding:11px 16px;
+    border-radius:12px;
+    cursor:pointer;
+  }
+
+  .sec-title{
+    display:flex;align-items:center;gap:8px;
+    margin:26px 0 12px;
+    font-size:15px;
+    font-weight:800;
+    color:var(--green-dark);
+    letter-spacing:-.3px;
+  }
+  .sec-title::before{
+    content:"";
+    width:5px;height:17px;border-radius:3px;background:var(--green);
+  }
+
+  .card{
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:var(--radius);
+    padding:17px 17px 16px;
+    margin-bottom:13px;
+    box-shadow:0 2px 8px rgba(35,40,42,.04);
+  }
+  .card.mine{border-color:#BBDCCB;box-shadow:0 2px 10px rgba(15,95,69,.09);}
+  .card-top{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;}
+  .tag{
+    font-size:12.5px;font-weight:800;letter-spacing:-.2px;
+    padding:4px 9px;border-radius:7px;
+    background:#F1F6F3;color:var(--green-dark);
+  }
+  .tag.pick{background:var(--gold-bg);color:var(--gold);}
+  .card h3{
+    margin:0 0 3px;
+    font-size:20.5px;
+    letter-spacing:-.6px;
+    font-weight:800;
+    line-height:1.35;
+  }
+  .card h3 .org{
+    display:inline-block;
+    margin-left:5px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--ink-soft);
+    letter-spacing:0;
+    vertical-align:middle;
+  }
+  .card .desc{
+    margin:8px 0 12px;
+    font-size:15.5px;
+    line-height:1.62;
+    color:#3C443F;
+    letter-spacing:-.3px;
+  }
+  .meta{list-style:none;margin:0 0 14px;padding:12px 0 0;border-top:1px dashed var(--line);display:grid;gap:7px;}
+  .meta li{font-size:14.5px;line-height:1.5;color:var(--ink-soft);letter-spacing:-.2px;display:flex;gap:8px;}
+  .meta li b{flex:0 0 58px;color:var(--green-dark);font-weight:800;}
+  .meta li span{flex:1 1 auto;}
+  .go{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    min-height:56px;
+    background:var(--green);
+    color:#fff;
+    text-decoration:none;
+    font-size:17.5px;
+    font-weight:800;
+    letter-spacing:-.4px;
+    border-radius:14px;
+    transition:background .15s ease;
+  }
+  .go:active{background:var(--green-dark);}
+  .go .out{font-size:15px;opacity:.85;}
+  .src{
+    margin:9px 0 0;
+    font-size:12.5px;
+    line-height:1.5;
+    color:#8A938F;
+    text-align:center;
+    word-break:break-all;
+  }
+
+  /* ── 안내·주의 ─────────────────────── */
+  .notice{
+    margin:26px 0 0;
+    background:#FDF8EC;
+    border:1.5px solid #EFE0BF;
+    border-radius:var(--radius);
+    padding:15px 17px;
+  }
+  .notice h4{margin:0 0 7px;font-size:15px;font-weight:800;color:#8A6118;letter-spacing:-.3px;}
+  .notice p{margin:0;font-size:14px;line-height:1.6;color:#6E5B33;letter-spacing:-.2px;}
+  .notice p + p{margin-top:7px;}
+
+  /* ── 더 찾아보기 ───────────────────── */
+  .more{list-style:none;margin:0;padding:0;display:grid;gap:9px;}
+  .more a{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:15px 16px;
+    color:var(--ink);
+    text-decoration:none;
+    font-size:15.5px;
+    font-weight:700;
+    letter-spacing:-.3px;
+  }
+  .more a small{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);letter-spacing:-.1px;margin-top:2px;}
+  .more a .arw{color:#B9C4BF;font-size:18px;}
+
+  /* ── 하단 연결 영역(샘플) ──────────── */
+  .connect{
+    margin-top:30px;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:22px;
+    padding:20px 18px;
+    text-align:center;
+  }
+  .connect h3{margin:0 0 5px;font-size:18.5px;letter-spacing:-.6px;font-weight:800;}
+  .connect p{margin:0 0 15px;font-size:14px;color:var(--ink-soft);line-height:1.55;letter-spacing:-.2px;}
+  .connect .btns{display:grid;gap:9px;}
+  .connect .btns a{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    min-height:54px;
+    text-decoration:none;
+    font-size:16.5px;font-weight:800;letter-spacing:-.4px;
+    border-radius:14px;
+  }
+  .btn-blog{background:#03C75A;color:#fff;}
+  .btn-shop{background:#F5EFE4;color:#5A4B33;border:1.5px solid #E4D8C3;}
+
+  footer{
+    margin-top:26px;
+    padding:0 4px;
+    font-size:12.5px;
+    line-height:1.7;
+    color:#8A938F;
+    letter-spacing:-.1px;
+  }
+  footer p{margin:0 0 6px;}
+  footer .fair{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
+  .toast{
+    position:fixed;left:50%;bottom:22px;transform:translate(-50%,12px);
+    background:rgba(35,40,42,.94);color:#fff;
+    font-size:14px;font-weight:700;letter-spacing:-.2px;
+    padding:11px 17px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;
+    z-index:9;
+  }
+  .toast.on{opacity:1;transform:translate(-50%,0);}
+  @media (min-width:430px){
+    h1{font-size:37px;}
+    h2.q{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <p class="kicker">로그인 없이 · 설치 없이</p>
+    <h1>내 <span class="num">숨은 돈</span>,<br>10초 만에 찾기</h1>
+    <p class="lead">내가 받을 수 있는 지원금·환급금을<br>공식 사이트 바로가기로 정리해 드려요.</p>
+    <ul class="facts">
+      <li>3번만 누르면 끝</li>
+      <li>회원가입 없음</li>
+      <li>정부·공공기관 공식 사이트만</li>
+    </ul>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ── 3단계 선택 ─────────────────── -->
+  <section id="quiz" aria-labelledby="qTitle">
+    <div class="steps">
+      <div class="bar"><span id="bar"></span></div>
+      <div class="step-no">
+        <span id="stepNo">1단계 · 연령대</span>
+        <button type="button" class="back" id="backBtn" hidden>← 이전</button>
+      </div>
+    </div>
+
+    <h2 class="q" id="qTitle">연령대를 골라 주세요<small>많이 받는 혜택이 달라요</small></h2>
+    <div class="opts" id="opts" role="group" aria-labelledby="qTitle"></div>
+  </section>
+
+  <!-- ── 결과 ───────────────────────── -->
+  <section id="result" hidden aria-live="polite">
+    <div class="sum">
+      <p class="picked" id="pickedText"></p>
+      <h2>확인해 볼 항목 <b id="cnt">0</b>가지</h2>
+      <button type="button" class="retry" id="retryBtn">↺ 조건 다시 고르기</button>
+    </div>
+    <h3 class="sec-title" id="mainTitle">바로 확인해 보세요</h3>
+    <div id="cards"></div>
+    <div id="subBlock" hidden>
+      <h3 class="sec-title">내 조건에 함께 맞는 항목</h3>
+      <div id="subCards"></div>
+    </div>
+
+    <div class="notice">
+      <h4>꼭 확인하세요</h4>
+      <p>아래 버튼은 모두 <b>정부·공공기관·금융결제원 등 공식 사이트</b>로만 연결됩니다. 이 페이지는 어떤 개인정보도 받지 않아요.</p>
+      <p>“환급금”을 미끼로 <b>문자·카톡에 링크</b>를 보내는 사칭이 많습니다. 링크를 누르지 말고, 공식 앱이나 이 페이지의 버튼으로 직접 접속하세요.</p>
+      <p>본인인증은 각 공식 사이트에서 하게 되며, 조회 결과는 그 자리에서 바로 확인할 수 있습니다.</p>
+    </div>
+
+    <h3 class="sec-title">더 찾아볼 수 있어요</h3>
+    <ul class="more">
+      <li>
+        <a href="https://plus.gov.kr/portal/benefitV2/" target="_blank" rel="noopener">
+          <span>정부24 보조금24<small>내가 받을 수 있는 정부 혜택 한 번에 조회</small></span>
+          <span class="arw">↗</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://www.wetax.go.kr/" target="_blank" rel="noopener">
+          <span>위택스 지방세 환급금<small>자동차세·재산세 등 잘못 낸 지방세 돌려받기</small></span>
+          <span class="arw">↗</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ── 하단 연결 영역(샘플) ────────── -->
+  <section class="connect" id="connect">
+    <h3>생활비 아끼는 정보 더 보기</h3>
+    <p>놓치기 쉬운 지원금 소식과<br>살림에 도움 되는 정보를 계속 올리고 있어요.</p>
+    <div class="btns">
+      <a class="btn-blog" href="https://blog.naver.com/moneylife_info" target="_blank" rel="noopener">알아두면 편한 생활정보 블로그</a>
+      <a class="btn-shop" href="https://litt.ly/creator529" target="_blank" rel="noopener">쿠팡 꿀템 모아둔 곳</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>이 페이지는 공공기관 공식 안내를 바탕으로 정리한 무료 정보 페이지입니다. 제도 기준·신청 기간은 바뀔 수 있으니, 신청 전에 연결된 공식 사이트의 최신 안내를 꼭 확인해 주세요.</p>
+    <p>정부 지원사업을 대행하거나 수수료를 받고 진행해 주는 페이지가 아닙니다.</p>
+    <p class="fair">하단 ‘쿠팡 꿀템’ 링크에는 쿠팡파트너스 등 제휴 링크가 포함될 수 있으며, 이 경우 구매자에게 추가 비용 없이 일정액의 수수료를 받을 수 있습니다.</p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var AGES = [
+    {v:"20", t:"20~30대", e:"🌱"},
+    {v:"40", t:"40~50대", e:"🌿"},
+    {v:"60", t:"60대 이상", e:"🌳"}
+  ];
+  var HOMES = [
+    {v:"single", t:"1인 가구", e:"🙋", d:"혼자 살아요"},
+    {v:"work",   t:"맞벌이·직장인", e:"💼", d:"월급을 받아요"},
+    {v:"family", t:"주부·가족", e:"🏠", d:"가족과 함께 살아요"},
+    {v:"self",   t:"자영업·프리랜서", e:"🧾", d:"내 사업·내 일"}
+  ];
+  var CATS = [
+    {v:"money",  t:"잠든 돈·환급금", e:"💰", d:"내 이름으로 남아 있는 돈"},
+    {v:"living", t:"생활비·난방비 지원", e:"🔥", d:"매달 나가는 돈 줄이기"},
+    {v:"tax",    t:"세금·건강보험 환급", e:"🧮", d:"많이 냈으면 돌려받기"},
+    {v:"all",    t:"전체 보기", e:"👀", d:"일단 다 보여 주세요"}
+  ];
+
+  // 모든 링크는 실제 접속(200 OK)을 확인한 공식 주소입니다.
+  var ITEMS = [
+    {
+      id:"acct", cat:"money", catName:"잠든 돈",
+      title:"어카운트인포", org:"금융결제원",
+      desc:"은행·저축은행·증권사에 흩어진 내 계좌와, 1년 넘게 거래가 없는 휴면예금을 한 번에 조회할 수 있어요. 잔액이 적은 계좌는 그 자리에서 해지하거나 다른 계좌로 옮길 수 있습니다.",
+      who:"은행 계좌를 2개 이상 만든 적 있는 분",
+      need:"본인 명의 휴대폰 또는 공동인증서",
+      url:"https://www.payinfo.or.kr/payinfo.html",
+      ages:["20","40","60"], homes:["single","work","family","self"]
+    },
+    {
+      id:"tel", cat:"money", catName:"잠든 돈",
+      title:"통신비 미환급금", org:"스마트초이스",
+      desc:"휴대폰을 바꾸거나 번호이동·해지할 때 정산되지 못한 과오납 요금, 보증금 같은 돈을 조회하고 환급 신청까지 할 수 있어요. KT·SKT·LG유플러스·SK브로드밴드가 대상입니다.",
+      who:"휴대폰 번호를 바꾸거나 해지한 적 있는 분",
+      need:"본인 명의 휴대폰 (실명확인)",
+      url:"https://www.smartchoice.or.kr/smc/service/refund01.do",
+      ages:["20","40","60"], homes:["single","work","self"]
+    },
+    {
+      id:"card", cat:"money", catName:"잠든 돈",
+      title:"카드포인트 통합조회", org:"여신금융협회",
+      desc:"여러 카드사에 조금씩 쌓여 잊고 있던 포인트를 한 번에 조회하고, 내 은행 계좌로 현금처럼 받을 수 있어요. 카드사별로 따로 찾아다니지 않아도 됩니다.",
+      who:"신용·체크카드를 1장 이상 쓰는 분",
+      need:"본인 명의 휴대폰 (간편인증)",
+      url:"https://www.cardpoint.or.kr",
+      ages:["20","40"], homes:["single","work","self"]
+    },
+    {
+      id:"insu", cat:"money", catName:"잠든 돈",
+      title:"숨은 보험금 찾기", org:"내보험찾아줌",
+      desc:"가입만 하고 받지 않은 보험금, 만기·해지 후 찾아가지 않은 돈이 있는지 내 이름으로 찾아볼 수 있어요. 가족이 남긴 보험금도 확인할 수 있습니다.",
+      who:"보험에 가입한 적 있는 분, 가족 중 돌아가신 분이 있는 분",
+      need:"본인 명의 휴대폰 또는 공동인증서",
+      url:"https://cont.insure.or.kr/cont_web/intro.do",
+      ages:["40","60"], homes:["family","single","self"]
+    },
+    {
+      id:"boki", cat:"living", catName:"생활비 지원",
+      title:"복지로 복지멤버십", org:"보건복지부",
+      desc:"내 소득·가구 형태를 넣어 두면, 받을 수 있는 복지 혜택을 미리 알려 주는 서비스예요. 신청은 복지로에서 바로 할 수 있고, 청년·한부모·주거 지원까지 한곳에 모여 있습니다.",
+      who:"지원금을 한 번도 신청해 본 적 없는 분",
+      need:"본인 명의 휴대폰 (간편인증)",
+      url:"https://www.bokjiro.go.kr/ssis-tbu/index.do",
+      ages:["20","40","60"], homes:["single","family","self"]
+    },
+    {
+      id:"energy", cat:"living", catName:"생활비 지원",
+      title:"에너지바우처", org:"한국에너지공단",
+      desc:"전기·도시가스·등유 같은 난방·냉방비를 지원하는 제도예요. 2026년 신청 기간은 6월 15일부터 12월 31일까지로, 지금도 신청할 수 있습니다.",
+      who:"기초생활수급자 중 노인·영유아·장애인·한부모 가구 등",
+      need:"신분증, 에너지요금 고지서(요금차감 선택 시)",
+      url:"https://www.energyv.or.kr/",
+      ages:["40","60"], homes:["single","family"]
+    },
+    {
+      id:"hometax", cat:"tax", catName:"세금 환급",
+      title:"국세환급금·근로장려금", org:"국세청 홈택스",
+      desc:"돌려받지 않은 국세환급금을 찾고, 신청만 하면 받을 수 있는 근로장려금·자녀장려금 대상인지도 확인할 수 있어요. 종합소득세를 낸 자영업자에게 특히 필요합니다.",
+      who:"직장인·자영업자, 종합소득세를 신고한 분",
+      need:"본인 명의 휴대폰 또는 공동인증서",
+      url:"https://www.hometax.go.kr/",
+      ages:["40","60"], homes:["work","self","family"]
+    },
+    {
+      id:"nhis", cat:"tax", catName:"세금 환급",
+      title:"건강보험 환급금", org:"국민건강보험공단",
+      desc:"보험료를 두 번 냈거나 자격이 바뀌어 생긴 과오납 환급금, 병원비 본인부담상한액 초과금을 조회하고 신청할 수 있어요. 계좌를 미리 등록해 두면 자동으로 입금됩니다.",
+      who:"직장을 옮겼거나 병원비를 많이 낸 분",
+      need:"본인 명의 휴대폰 (간편인증)",
+      url:"https://www.nhis.or.kr/",
+      ages:["40","60"], homes:["family","single","work"]
+    }
+  ];
+
+  var state = { age:null, home:null, cat:null, step:0 };
+  var optsEl   = document.getElementById("opts");
+  var qTitle   = document.getElementById("qTitle");
+  var stepNo   = document.getElementById("stepNo");
+  var backBtn  = document.getElementById("backBtn");
+  var bar      = document.getElementById("bar");
+  var quiz     = document.getElementById("quiz");
+  var result   = document.getElementById("result");
+  var toastEl  = document.getElementById("toast");
+
+  function labelOf(list, v){
+    for (var i=0;i<list.length;i++){ if(list[i].v===v) return list[i].t; }
+    return "";
+  }
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("on");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function(){ toastEl.classList.remove("on"); }, 1600);
+  }
+
+  function render(){
+    var list, title, sub, stepName;
+    if (state.step === 0){
+      list = AGES; title = "연령대를 골라 주세요"; sub = "많이 받는 혜택이 달라요"; stepName = "1단계 · 연령대";
+    } else if (state.step === 1){
+      list = HOMES; title = "어떻게 지내고 계세요?"; sub = "가구 형태에 따라 받을 수 있는 지원이 달라져요"; stepName = "2단계 · 가구";
+    } else {
+      list = CATS; title = "궁금한 건 무엇인가요?"; sub = "마지막 단계예요"; stepName = "3단계 · 항목";
+    }
+    stepNo.textContent = stepName;
+    qTitle.innerHTML = title + "<small>" + sub + "</small>";
+    bar.style.width = ((state.step + 1) / 3 * 100) + "%";
+    backBtn.hidden = (state.step === 0);
+
+    optsEl.innerHTML = "";
+    var current = state.step === 0 ? state.age : (state.step === 1 ? state.home : state.cat);
+    list.forEach(function(o){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt";
+      b.setAttribute("role","radio");
+      b.setAttribute("aria-checked", current === o.v ? "true" : "false");
+      var desc = o.d ? "<em>" + o.d + "</em>" : "";
+      b.innerHTML = '<span class="ic" aria-hidden="true">' + o.e + '</span>'
+                  + '<span class="txt">' + o.t + desc + '</span>'
+                  + '<span class="arw" aria-hidden="true">›</span>';
+      b.addEventListener("click", function(){ choose(o.v); });
+      optsEl.appendChild(b);
+    });
+  }
+
+  function choose(v){
+    if (state.step === 0){ state.age = v; state.step = 1; render(); }
+    else if (state.step === 1){ state.home = v; state.step = 2; render(); }
+    else { state.cat = v; showResult(); }
+  }
+
+  function score(it){
+    var s = 0;
+    if (it.ages.indexOf(state.age) > -1) s += 1;
+    if (it.homes.indexOf(state.home) > -1) s += 1;
+    return s;
+  }
+  function byScore(a,b){
+    var d = score(b) - score(a);
+    if (d !== 0) return d;
+    return ITEMS.indexOf(a) - ITEMS.indexOf(b);
+  }
+
+  function card(it){
+    var mine = score(it) === 2;
+    return '<article class="card' + (mine ? " mine" : "") + '">'
+      + '<div class="card-top">'
+      +   '<span class="tag">' + it.catName + '</span>'
+      +   (mine ? '<span class="tag pick">내 조건에 맞아요</span>' : "")
+      + '</div>'
+      + '<h3>' + it.title + '<span class="org">' + it.org + '</span></h3>'
+      + '<p class="desc">' + it.desc + '</p>'
+      + '<ul class="meta">'
+      +   '<li><b>이런 분</b><span>' + it.who + '</span></li>'
+      +   '<li><b>준비물</b><span>' + it.need + '</span></li>'
+      + '</ul>'
+      + '<a class="go" href="' + it.url + '" target="_blank" rel="noopener">'
+      +   '공식 사이트 열기 <span class="out" aria-hidden="true">↗</span></a>'
+      + '<p class="src">' + it.url.replace(/^https?:\/\//,"").replace(/\/$/,"") + '</p>'
+      + '</article>';
+  }
+
+  function showResult(){
+    quiz.hidden = true;
+    result.hidden = false;
+
+    var main, restTitle, subItems = [];
+    if (state.cat === "all"){
+      main = ITEMS.slice().sort(byScore);
+      restTitle = "";
+    } else {
+      main = ITEMS.filter(function(it){ return it.cat === state.cat; }).sort(byScore);
+      subItems = ITEMS.filter(function(it){ return it.cat !== state.cat && score(it) === 2; });
+    }
+
+    document.getElementById("pickedText").textContent =
+      labelOf(AGES, state.age) + " · " + labelOf(HOMES, state.home) + " · " + labelOf(CATS, state.cat);
+    document.getElementById("cnt").textContent = String(main.length + subItems.length);
+    document.getElementById("mainTitle").textContent =
+      state.cat === "all" ? "받을 수 있는 항목 전체" : labelOf(CATS, state.cat) + " 항목";
+
+    var cardsHtml = "";
+    main.forEach(function(it){ cardsHtml += card(it); });
+    document.getElementById("cards").innerHTML = cardsHtml;
+
+    var subBlock = document.getElementById("subBlock");
+    if (subItems.length){
+      subBlock.hidden = false;
+      subItems.sort(byScore);
+      var h = "";
+      subItems.forEach(function(it){ h += card(it); });
+      document.getElementById("subCards").innerHTML = h;
+    } else {
+      subBlock.hidden = true;
+    }
+
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+
+  backBtn.addEventListener("click", function(){
+    if (state.step > 0){ state.step -= 1; render(); }
+  });
+  document.getElementById("retryBtn").addEventListener("click", function(){
+    state = { age:null, home:null, cat:null, step:0 };
+    result.hidden = true;
+    quiz.hidden = false;
+    render();
+    window.scrollTo({ top: 0, behavior: "auto" });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
