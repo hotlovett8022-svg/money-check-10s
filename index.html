@@ -302,6 +302,17 @@
     text-align:center;
     word-break:break-all;
   }
+  .hint{
+    margin:8px 0 0;
+    font-size:13px;
+    line-height:1.55;
+    color:#5C6663;
+    background:#F4F7F5;
+    border-radius:10px;
+    padding:9px 11px;
+    letter-spacing:-.2px;
+  }
+  .hint a{color:var(--green);font-weight:800;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;}
 
   /* ── 안내·주의 ─────────────────────── */
   .notice{
@@ -429,6 +440,7 @@
       <p>아래 버튼은 모두 <b>정부·공공기관·금융결제원 등 공식 사이트</b>로만 연결됩니다. 이 페이지는 어떤 개인정보도 받지 않아요.</p>
       <p>“환급금”을 미끼로 <b>문자·카톡에 링크</b>를 보내는 사칭이 많습니다. 링크를 누르지 말고, 공식 앱이나 이 페이지의 버튼으로 직접 접속하세요.</p>
       <p>본인인증은 각 공식 사이트에서 하게 되며, 조회 결과는 그 자리에서 바로 확인할 수 있습니다.</p>
+      <p>일부 사이트는 휴대폰에서 앱 설치를 먼저 안내합니다. 화면이 잘 열리지 않으면 PC에서 접속하거나 그 기관의 공식 앱을 이용하세요.</p>
     </div>
 
     <h3 class="sec-title">더 찾아볼 수 있어요</h3>
@@ -497,7 +509,10 @@
       title:"어카운트인포", org:"금융결제원",
       desc:"은행·저축은행·증권사에 흩어진 내 계좌와, 1년 넘게 거래가 없는 휴면예금을 한 번에 조회할 수 있어요. 잔액이 적은 계좌는 그 자리에서 해지하거나 다른 계좌로 옮길 수 있습니다.",
       who:"은행 계좌를 2개 이상 만든 적 있는 분",
-      need:"본인 명의 휴대폰 또는 공동인증서",
+      need:"본인 명의 휴대폰 + 금융인증서·공동인증서",
+      note:"휴대폰에서는 ‘어카운트인포’ 앱을 설치해 이용하고, PC에서는 위 주소로 접속하면 됩니다.",
+      noteUrl:"https://play.google.com/store/apps/details?id=com.kftc.payinfo.android",
+      noteLabel:"안드로이드 앱 설치",
       url:"https://www.payinfo.or.kr/payinfo.html",
       ages:["20","40","60"], homes:["single","work","family","self"]
     },
@@ -652,6 +667,9 @@
       + '<a class="go" href="' + it.url + '" target="_blank" rel="noopener">'
       +   '공식 사이트 열기 <span class="out" aria-hidden="true">↗</span></a>'
       + '<p class="src">' + it.url.replace(/^https?:\/\//,"").replace(/\/$/,"") + '</p>'
+      + (it.note ? '<p class="hint">' + it.note
+          + (it.noteUrl ? ' <a href="' + it.noteUrl + '" target="_blank" rel="noopener">' + (it.noteLabel || "앱 열기") + ' ↗</a>' : '')
+          + '</p>' : '')
       + '</article>';
   }
 
