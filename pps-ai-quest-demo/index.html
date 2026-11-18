@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>나르미·달이의 2050 AI 조달 마스터 | 2026 조달청 AI 게임 공모전</title>
+<meta name="description" content="조달청 공식 캐릭터 나르미·달이와 함께하는 2050 AI 조달 체험 웹게임. 공정·투명, 혁신·친환경, 신속·재난 조달 3개 스테이지.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============ 기본 ============ */
+:root{
+  --blue:#0052CC; --sky:#0EA5E9; --neon:#5FE3FF;
+  --bg0:#04101f; --bg1:#071d38;
+  --ink:#eef6ff; --sub:#a8c0da;
+  --ok:#2ee08a; --bad:#ff6172; --gold:#ffd24a;
+  --card:linear-gradient(160deg,rgba(18,52,96,.92),rgba(7,24,46,.94));
+  --line:rgba(120,200,255,.22);
+  --r:20px;
+  --font: "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --title-font: "Jua","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:var(--font); color:var(--ink);
+  background:
+    radial-gradient(1100px 620px at 50% -12%, #0d3f75 0%, rgba(13,63,117,0) 62%),
+    radial-gradient(820px 520px at 106% 104%, #0a3358 0%, rgba(10,51,88,0) 60%),
+    radial-gradient(700px 500px at -10% 90%, #08284a 0%, rgba(8,40,74,0) 60%),
+    var(--bg0);
+  overflow:hidden; overscroll-behavior:none;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.5;
+  background-image:
+    linear-gradient(rgba(95,227,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(95,227,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+}
+#app{
+  position:relative; height:100vh; height:100dvh; width:100%;
+  display:flex; flex-direction:column;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(8px + env(safe-area-inset-bottom));
+  gap:8px; max-width:1180px; margin:0 auto;
+}
+
+/* ============ 상단 HUD ============ */
+#hud{
+  flex:0 0 auto; display:flex; align-items:center; gap:10px;
+  padding:8px 12px; border-radius:16px;
+  background:rgba(6,22,42,.72); border:1px solid var(--line);
+  backdrop-filter:blur(8px);
+}
+.hud-brand{font-family:var(--title-font); font-size:clamp(13px,2.4vw,17px); letter-spacing:.02em; color:#dff3ff; white-space:nowrap;}
+.hud-brand span{color:var(--neon);}
+.hud-stage{
+  flex:1; text-align:center; font-size:clamp(11px,2.1vw,14px); color:var(--sub);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:700; letter-spacing:.02em;
+}
+.hud-score{font-size:clamp(11px,2.2vw,14px); color:var(--sub); white-space:nowrap;}
+.hud-score b{color:var(--gold); font-size:1.25em; font-variant-numeric:tabular-nums;}
+.mute{
+  flex:0 0 auto; width:38px; height:38px; border-radius:12px; cursor:pointer;
+  border:1px solid var(--line); background:rgba(14,165,233,.14); color:#dff3ff;
+  font-size:17px; display:grid; place-items:center; padding:0; line-height:1;
+}
+.mute:active{transform:scale(.94);}
+.mute.off{background:rgba(255,97,114,.14); border-color:rgba(255,97,114,.4);}
+
+/* ============ 화면 ============ */
+main{flex:1 1 auto; min-height:0; position:relative;}
+.screen{
+  position:absolute; inset:0; display:none; flex-direction:column;
+  min-height:0; overflow:auto; -webkit-overflow-scrolling:touch;
+}
+.screen.active{display:flex; animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+
+/* ============ 버튼 ============ */
+.btn{
+  font-family:var(--font); font-weight:900; color:#fff; cursor:pointer;
+  border:1px solid rgba(255,255,255,.16); border-radius:16px;
+  padding:14px 18px; font-size:clamp(15px,2.6vw,18px); line-height:1.15;
+  background:linear-gradient(180deg,#1b6fe0,#0052CC);
+  box-shadow:0 8px 22px rgba(0,82,204,.38), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  touch-action:manipulation; min-height:54px;
+}
+.btn:hover:not(:disabled){filter:brightness(1.08);}
+.btn:active:not(:disabled){transform:scale(.97);}
+.btn:disabled{opacity:.34; cursor:not-allowed; box-shadow:none; filter:saturate(.4);}
+.btn.primary{background:linear-gradient(180deg,#28b8f5,#0052CC); box-shadow:0 12px 30px rgba(14,165,233,.45), inset 0 1px 0 rgba(255,255,255,.4);}
+.btn.scan{background:linear-gradient(180deg,#16b6e8,#0369a1); box-shadow:0 8px 22px rgba(14,165,233,.35), inset 0 1px 0 rgba(255,255,255,.3);}
+.btn.approve{background:linear-gradient(180deg,#25c97c,#0b8a52); box-shadow:0 8px 22px rgba(46,224,138,.3), inset 0 1px 0 rgba(255,255,255,.3);}
+.btn.reject{background:linear-gradient(180deg,#ff6a7a,#c62839); box-shadow:0 8px 22px rgba(255,97,114,.3), inset 0 1px 0 rgba(255,255,255,.3);}
+.btn.ghost{background:rgba(14,165,233,.12); border-color:var(--line); box-shadow:none; color:#cfeeff;}
+.btn.big{font-size:clamp(18px,3.2vw,22px); padding:16px 34px; min-height:60px; border-radius:18px;}
+
+/* ============ 타이틀 ============ */
+#screen-title{align-items:center; justify-content:safe center; text-align:center; overflow:hidden;}
+.title-wrap{
+  display:flex; flex-direction:column; align-items:center; gap:clamp(6px,1.4vh,14px);
+  width:100%; max-width:920px; padding:4px 0;
+}
+.chip{
+  display:inline-block; font-size:clamp(10px,1.9vw,13px); font-weight:700; letter-spacing:.1em;
+  color:#bfe9ff; border:1px solid rgba(95,227,255,.45); border-radius:999px;
+  padding:5px 14px; background:rgba(14,165,233,.12); text-transform:uppercase;
+}
+h1{
+  font-family:var(--title-font); margin:0; line-height:1.16;
+  font-size:clamp(24px,5.6vw,44px); letter-spacing:-.01em; font-weight:400;
+  text-shadow:0 4px 26px rgba(0,82,204,.6);
+}
+h1 .glow{
+  background:linear-gradient(95deg,#8ff0ff,#5FE3FF 35%,#8ec5ff 70%,#ffffff);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 0 18px rgba(95,227,255,.45));
+}
+.title-sub{margin:0; color:var(--sub); font-size:clamp(12px,2.2vw,15px); line-height:1.5; max-width:640px;}
+.duo{
+  width:auto; height:clamp(140px,31vh,300px); max-width:92vw; object-fit:contain;
+  filter:drop-shadow(0 22px 34px rgba(0,0,0,.55));
+  animation:floaty 4.2s ease-in-out infinite;
+}
+@keyframes floaty{0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);}}
+.howto{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:6px 8px;
+  font-size:clamp(10px,1.85vw,13px); color:var(--sub);
+}
+.howto span{
+  border:1px solid var(--line); border-radius:999px; padding:5px 11px;
+  background:rgba(8,28,52,.7); white-space:nowrap;
+}
+.start-row{display:flex; gap:10px; align-items:center;}
+
+/* ============ 스테이지 공통 ============ */
+.screen-body{
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:safe center; gap:clamp(6px,1.2vh,12px);
+  width:100%; max-width:980px; margin:0 auto; padding:2px 0;
+}
+.stage-head{
+  width:100%; text-align:center; flex:0 0 auto;
+}
+.stage-tag{
+  display:inline-block; font-size:clamp(10px,1.8vw,12px); font-weight:900; letter-spacing:.16em;
+  color:#062b4d; background:linear-gradient(180deg,#8ff0ff,#38bdf8);
+  padding:3px 10px; border-radius:6px; margin-bottom:4px;
+}
+.stage-head h2{
+  font-family:var(--title-font); font-weight:400; margin:2px 0 0;
+  font-size:clamp(15px,3vw,23px); line-height:1.25;
+}
+.stage-head h2 em{font-style:normal; color:var(--neon);}
+.pips{display:flex; gap:6px; justify-content:center; margin-top:6px;}
+.pips i{display:block; width:26px; height:5px; border-radius:3px; background:rgba(140,190,230,.22);}
+.pips i.on{background:linear-gradient(90deg,#5FE3FF,#0EA5E9); box-shadow:0 0 10px rgba(95,227,255,.6);}
+.pips i.now{background:linear-gradient(90deg,#ffd24a,#ff9a3d);}
+
+/* ============ 스테이지1 : 서류 카드 ============ */
+.doc-card{
+  position:relative; overflow:hidden; width:100%; max-width:760px;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+  padding:clamp(12px,2.2vw,20px); box-shadow:0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(160,220,255,.14);
+  flex:0 1 auto;
+}
+.doc-card.scanning{animation:pulseBorder 1s ease;}
+@keyframes pulseBorder{0%,100%{border-color:var(--line);} 50%{border-color:rgba(95,227,255,.85); box-shadow:0 0 34px rgba(95,227,255,.35);}}
+.doc-top{display:flex; justify-content:space-between; align-items:center; font-size:clamp(10px,1.8vw,12px); color:var(--sub); letter-spacing:.06em;}
+.doc-label{border:1px solid var(--line); border-radius:6px; padding:2px 8px;}
+.doc-round{font-variant-numeric:tabular-nums;}
+.doc-card h3{
+  margin:6px 0 2px; font-family:var(--title-font); font-weight:400;
+  font-size:clamp(18px,3.6vw,26px); display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.seal{
+  font-family:var(--font); font-size:11px; font-weight:900; letter-spacing:.05em;
+  color:#ffd7db; border:2px solid rgba(255,97,114,.75); border-radius:6px;
+  padding:1px 7px; transform:rotate(-6deg); background:rgba(198,40,57,.18);
+}
+.seal.ok{color:#c8ffe6; border-color:rgba(46,224,138,.8); background:rgba(11,138,82,.18); transform:rotate(-6deg);}
+.doc-meta{color:var(--sub); font-size:clamp(11px,2vw,13px); margin-bottom:10px;}
+.doc-fields{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px;}
+.doc-fields li{
+  display:grid; grid-template-columns:minmax(74px,104px) 1fr auto; align-items:center; gap:8px;
+  padding:8px 10px; border-radius:10px; background:rgba(255,255,255,.045);
+  border:1px solid rgba(140,200,255,.1); font-size:clamp(11px,2vw,14px);
+  transition:background .25s, border-color .25s;
+}
+.doc-fields .k{color:var(--sub); font-weight:700; font-size:.92em;}
+.doc-fields .v{color:#7c95af; letter-spacing:.14em; transition:color .25s;}
+.doc-fields li.revealed .v{color:var(--ink); letter-spacing:0; font-weight:700;}
+.doc-fields li.good{background:rgba(46,224,138,.1); border-color:rgba(46,224,138,.35);}
+.doc-fields li.warn{background:rgba(255,97,114,.1); border-color:rgba(255,97,114,.38);}
+.doc-fields .flag{font-size:14px; opacity:0; transition:opacity .2s;}
+.doc-fields li.revealed .flag{opacity:1;}
+.scan-sweep{
+  position:absolute; left:0; right:0; top:0; height:0; pointer-events:none; opacity:0;
+  background:linear-gradient(180deg,rgba(95,227,255,0),rgba(95,227,255,.28),rgba(95,227,255,.75));
+  box-shadow:0 0 24px rgba(95,227,255,.8);
+}
+.doc-card.scanning .scan-sweep{animation:sweep .95s cubic-bezier(.4,0,.6,1);}
+@keyframes sweep{
+  0%{opacity:0; top:0; height:6px;} 8%{opacity:1;}
+  92%{opacity:1;} 100%{opacity:0; top:100%; height:6px;}
+}
+.actions{display:flex; gap:8px; width:100%; max-width:760px; flex:0 0 auto; flex-wrap:wrap;}
+.actions .btn{flex:1 1 0; min-width:104px;}
+
+.verdict{
+  width:100%; max-width:760px; display:none; flex-direction:column; gap:8px;
+  border-radius:16px; padding:10px 14px; flex:0 0 auto; border:1px solid var(--line);
+  background:rgba(8,30,56,.9);
+}
+.verdict.show{display:flex; animation:fadeIn .25s ease;}
+.verdict.good{border-color:rgba(46,224,138,.5); box-shadow:0 0 24px rgba(46,224,138,.18);}
+.verdict.bad{border-color:rgba(255,97,114,.5); box-shadow:0 0 24px rgba(255,97,114,.18);}
+.verdict-title{font-weight:900; font-size:clamp(13px,2.4vw,16px); display:flex; align-items:center; gap:6px;}
+.verdict.good .verdict-title{color:#7dffc0;}
+.verdict.bad .verdict-title{color:#ffa8b2;}
+.verdict-why{font-size:clamp(11px,2vw,13.5px); color:#cfe0f2; line-height:1.45;}
+.verdict .btn{align-self:flex-end; min-height:44px; padding:10px 20px; font-size:14px;}
+
+/* ============ 스테이지2 : 미션 + 후보 ============ */
+.mission{
+  width:100%; max-width:980px; display:flex; align-items:center; gap:10px;
+  background:linear-gradient(120deg,rgba(14,165,233,.16),rgba(8,30,56,.9));
+  border:1px solid rgba(95,227,255,.32); border-radius:16px;
+  padding:10px 14px; flex:0 0 auto;
+}
+.mission-icon{font-size:clamp(20px,3.4vw,26px); flex:0 0 auto;}
+.mission-txt{flex:1 1 auto; min-width:0;}
+.mission-label{font-size:10px; letter-spacing:.14em; color:#8fd8ff; font-weight:900;}
+#missionText{font-size:clamp(13px,2.3vw,16px); font-weight:700; line-height:1.35;}
+.budget{
+  flex:0 0 auto; font-size:clamp(11px,1.9vw,13px); font-weight:900; color:#062b4d;
+  background:linear-gradient(180deg,#ffe38a,#ffc93c); border-radius:999px; padding:6px 12px; white-space:nowrap;
+}
+.candidates{
+  width:100%; max-width:980px; display:grid; gap:8px;
+  grid-template-columns:1fr; flex:0 1 auto; min-height:0;
+}
+@media (min-width:840px){ .candidates{grid-template-columns:repeat(3,1fr);} }
+.cand{
+  text-align:left; font-family:var(--font); color:var(--ink); cursor:pointer;
+  background:var(--card); border:1px solid var(--line); border-radius:16px;
+  padding:10px 12px; display:flex; flex-direction:column; gap:5px;
+  transition:transform .14s, border-color .2s, box-shadow .2s, opacity .3s;
+  touch-action:manipulation; position:relative;
+}
+@media (min-width:840px){ .cand{padding:14px 16px; min-height:176px;} .cand-ic{font-size:26px;} }
+.cand:hover:not(:disabled){transform:translateY(-2px); border-color:rgba(95,227,255,.6); box-shadow:0 12px 26px rgba(0,0,0,.35);}
+.cand:active:not(:disabled){transform:scale(.985);}
+.cand:disabled{cursor:default;}
+.cand.dim{opacity:.42; filter:grayscale(.4);}
+.cand.win{border-color:rgba(46,224,138,.8); box-shadow:0 0 26px rgba(46,224,138,.35); background:linear-gradient(160deg,rgba(20,80,60,.92),rgba(7,34,30,.94));}
+.cand.bad{border-color:rgba(255,97,114,.75); box-shadow:0 0 22px rgba(255,97,114,.25);}
+.cand-top{display:flex; gap:8px; align-items:center;}
+.cand-ic{font-size:clamp(18px,3vw,24px);}
+.cand-name{font-weight:900; font-size:clamp(12px,2.1vw,15px); line-height:1.25;}
+.cand-maker{font-size:clamp(9.5px,1.7vw,11.5px); color:var(--sub);}
+.tags{display:flex; gap:4px; flex-wrap:wrap;}
+.tag{font-size:9.5px; font-weight:900; border-radius:5px; padding:2px 6px; border:1px solid rgba(150,190,225,.3); color:#9db4cb;}
+.tag.on{color:#052a1d; background:linear-gradient(180deg,#8ff0c0,#2ee08a); border-color:transparent;}
+.tag.no{color:#ffd0d6; background:rgba(198,40,57,.22); border-color:rgba(255,97,114,.45);}
+.tag.budget{color:#2b1d00; background:linear-gradient(180deg,#ffe38a,#ffc93c); border-color:transparent;}
+.cand-price{margin-top:auto; display:flex; align-items:baseline; gap:6px; font-weight:900; font-size:clamp(13px,2.3vw,16px); color:#fff;}
+.cand-price small{font-weight:700; font-size:10.5px; color:var(--sub);}
+.cand-note{font-size:clamp(10px,1.8vw,12px); color:#c2d6ea; line-height:1.35;}
+.pick-mark{
+  position:absolute; top:8px; right:10px; font-size:18px; opacity:0; transition:opacity .2s;
+}
+.cand.win .pick-mark, .cand.bad .pick-mark{opacity:1;}
+
+/* ============ 스테이지3 : 액션 ============ */
+.emergency{
+  width:100%; max-width:980px; display:flex; align-items:center; justify-content:center; gap:10px;
+  border-radius:16px; padding:8px 14px; flex:0 0 auto;
+  background:linear-gradient(120deg,rgba(198,40,57,.35),rgba(120,20,40,.35));
+  border:1px solid rgba(255,97,114,.6); box-shadow:0 0 26px rgba(255,97,114,.22);
+  animation:alarm 1.6s ease-in-out infinite;
+}
+@keyframes alarm{0%,100%{box-shadow:0 0 18px rgba(255,97,114,.18);} 50%{box-shadow:0 0 34px rgba(255,97,114,.45);}}
+.emergency b{font-size:clamp(12px,2.2vw,15px);}
+.emergency span{font-size:clamp(15px,2.6vw,19px);}
+.timerbar{
+  width:100%; max-width:980px; flex:0 0 auto; position:relative; height:26px;
+  background:rgba(6,22,42,.9); border:1px solid var(--line); border-radius:999px; overflow:hidden;
+}
+#timerFill{position:absolute; inset:0 auto 0 0; width:100%; border-radius:999px;
+  background:linear-gradient(90deg,#38bdf8,#5FE3FF); transition:background .3s;}
+#timerFill.low{background:linear-gradient(90deg,#ff9a3d,#ff4d5e);}
+#timerText{
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-weight:900; font-size:13px; color:#04131f; letter-spacing:.04em; font-variant-numeric:tabular-nums;
+}
+.gauge{
+  width:100%; max-width:980px; flex:0 0 auto; display:flex; align-items:center; gap:10px;
+  justify-content:center; font-size:clamp(10px,1.9vw,13px); color:var(--sub); font-weight:700;
+}
+.slots{display:flex; gap:5px;}
+.slot{width:clamp(22px,4.4vw,30px); height:clamp(22px,4.4vw,30px); border-radius:8px;
+  border:1px solid rgba(140,200,255,.35); background:rgba(255,255,255,.05); display:grid; place-items:center; font-size:12px;}
+.slot.on{background:linear-gradient(180deg,#8ff0c0,#2ee08a); border-color:#2ee08a; box-shadow:0 0 12px rgba(46,224,138,.6); animation:pop .3s ease;}
+@keyframes pop{0%{transform:scale(.5);} 70%{transform:scale(1.18);} 100%{transform:scale(1);}}
+.grid-wrap{flex:1 1 auto; min-height:0; width:100%; max-width:640px; max-height:520px; display:flex; align-items:stretch;}
+.grid{
+  width:100%; display:grid; grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr); gap:8px; min-height:0;
+}
+.cell{
+  position:relative; border-radius:14px; border:1px dashed rgba(120,200,255,.16);
+  background:rgba(255,255,255,.025); display:grid; place-items:center; overflow:hidden;
+  cursor:default; transition:transform .1s, background .15s;
+}
+.cell.on{cursor:pointer; border-style:solid; animation:tileIn .18s ease;}
+@keyframes tileIn{from{transform:scale(.72); opacity:0;} to{transform:scale(1); opacity:1;}}
+.cell.relief{background:linear-gradient(160deg,rgba(14,120,90,.85),rgba(6,50,42,.95)); border-color:rgba(46,224,138,.75); box-shadow:0 0 18px rgba(46,224,138,.28);}
+.cell.junk{background:linear-gradient(160deg,rgba(96,40,60,.8),rgba(46,12,26,.95)); border-color:rgba(255,97,114,.5);}
+.cell .tile-ic{font-size:clamp(24px,5.4vw,40px); line-height:1; filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));}
+.cell .tile-nm{font-size:clamp(9px,1.7vw,12px); font-weight:900; margin-top:2px; text-align:center; line-height:1.15;}
+.cell.hit{animation:hitFlash .3s ease;}
+@keyframes hitFlash{0%{transform:scale(1);} 40%{transform:scale(1.12); box-shadow:0 0 26px rgba(46,224,138,.9);} 100%{transform:scale(1);}}
+.cell.miss{animation:shakeX .3s ease;}
+@keyframes shakeX{0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}}
+.float-pt{
+  position:fixed; z-index:60; pointer-events:none; font-weight:900; font-size:20px;
+  color:#7dffc0; text-shadow:0 2px 12px rgba(0,0,0,.6); animation:floatUp .8s ease forwards;
+}
+.float-pt.minus{color:#ff8b98;}
+@keyframes floatUp{0%{opacity:1; transform:translate(-50%,0) scale(1);} 100%{opacity:0; transform:translate(-50%,-56px) scale(1.15);}}
+
+.stage-done{
+  position:absolute; inset:0; z-index:40; display:none; place-items:center;
+  background:rgba(3,12,24,.82); backdrop-filter:blur(4px); padding:16px;
+}
+.stage-done.show{display:grid; animation:fadeIn .25s ease;}
+.done-card{
+  width:min(420px,100%); text-align:center; background:var(--card);
+  border:1px solid rgba(95,227,255,.45); border-radius:22px; padding:22px 18px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55);
+}
+.done-card h3{margin:0 0 6px; font-family:var(--title-font); font-weight:400; font-size:clamp(19px,4vw,25px);}
+.done-card p{margin:0 0 14px; color:var(--sub); font-size:clamp(11px,2.2vw,14px); line-height:1.5;}
+.done-card .big-num{font-size:clamp(30px,7vw,42px); font-weight:900; color:var(--gold); line-height:1; margin:6px 0 2px;}
+
+/* ============ 결과 ============ */
+#screen-result{justify-content:safe center;}
+.result-wrap{
+  width:100%; max-width:860px; margin:0 auto; display:flex; flex-direction:column;
+  align-items:center; gap:clamp(6px,1.2vh,12px); text-align:center;
+}
+.grade-badge{
+  width:clamp(74px,13vw,100px); height:clamp(74px,13vw,100px); border-radius:50%;
+  display:grid; place-items:center; font-size:clamp(36px,7vw,52px); font-weight:900;
+  color:#04131f; background:radial-gradient(circle at 32% 28%,#fff6c9,#ffd24a 55%,#f0a500);
+  box-shadow:0 0 40px rgba(255,210,74,.55), inset 0 -6px 14px rgba(170,100,0,.35);
+  animation:gradeIn .6s cubic-bezier(.2,1.4,.4,1);
+}
+@keyframes gradeIn{0%{transform:scale(.3) rotate(-25deg); opacity:0;} 100%{transform:none; opacity:1;}}
+.grade-name{font-family:var(--title-font); font-size:clamp(21px,4.4vw,32px); margin-top:-2px;}
+.final-score{font-size:clamp(13px,2.4vw,16px); color:var(--sub);}
+.final-score b{font-size:clamp(24px,4.6vw,34px); color:#fff; margin-right:2px;}
+.summary{
+  display:grid; grid-template-columns:1fr; gap:6px; width:100%; max-width:520px;
+}
+.summary-row{
+  display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:12px;
+  background:rgba(255,255,255,.05); border:1px solid rgba(140,200,255,.14);
+  font-size:clamp(11px,2vw,13.5px); text-align:left;
+}
+.summary-row .s-ic{font-size:15px;}
+.summary-row .s-name{flex:1; color:#dbe9f8; font-weight:700;}
+.summary-row .s-val{font-weight:900; color:var(--neon); font-variant-numeric:tabular-nums;}
+.values{
+  width:100%; max-width:640px; border-radius:16px; padding:10px 14px; text-align:left;
+  background:linear-gradient(120deg,rgba(14,165,233,.14),rgba(8,30,56,.85));
+  border:1px solid rgba(95,227,255,.25); display:flex; flex-direction:column; gap:4px;
+}
+.values b{font-size:clamp(11px,1.9vw,12.5px); color:#8fd8ff; letter-spacing:.08em;}
+.values p{margin:0; font-size:clamp(10.5px,1.9vw,13px); color:#d6e6f6; line-height:1.45;}
+.values p span{color:var(--neon); font-weight:900;}
+.result-btns{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+.foot-note{font-size:10px; color:#69809a; letter-spacing:.02em;}
+
+/* ============ 캐릭터 코치 바 ============ */
+#coach{
+  flex:0 0 auto; display:none; align-items:center; gap:10px;
+  padding:7px 12px 7px 8px; border-radius:16px; min-height:62px;
+  background:linear-gradient(120deg,rgba(12,44,82,.95),rgba(6,22,42,.95));
+  border:1px solid rgba(95,227,255,.3); box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+#coach.show{display:flex;}
+#coach img{width:clamp(44px,8vw,54px); height:auto; flex:0 0 auto; filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));}
+#coach .c-body{flex:1 1 auto; min-width:0; text-align:left;}
+#coach .c-name{font-size:10.5px; font-weight:900; color:var(--neon); letter-spacing:.08em; display:block; margin-bottom:1px;}
+#coach .c-text{font-size:clamp(11.5px,2.15vw,14px); line-height:1.4; color:#e6f2ff; display:block;}
+#coach.talking img{animation:bounce .5s ease;}
+@keyframes bounce{0%,100%{transform:translateY(0);} 45%{transform:translateY(-6px);}}
+
+/* ============ confetti ============ */
+.confetti{position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden;}
+.confetti i{
+  position:absolute; top:-12px; width:8px; height:14px; border-radius:2px; opacity:.9;
+  animation:fall linear forwards;
+}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg); opacity:.85;}}
+
+/* ============ 큰 화면(PC) ============ */
+@media (min-width:1100px){
+  .stage-head h2{font-size:26px;}
+  .stage-tag{font-size:12.5px; padding:4px 12px;}
+  .pips i{width:32px; height:6px;}
+  .doc-card{max-width:840px; padding:24px 26px;}
+  .doc-card h3{font-size:29px;}
+  .doc-meta{font-size:14px;}
+  .doc-fields li{padding:12px 14px; font-size:15.5px; grid-template-columns:120px 1fr auto;}
+  .actions{max-width:840px;}
+  .actions .btn{min-height:60px; font-size:19px;}
+  .verdict{max-width:840px; padding:14px 18px;}
+  .verdict-why{font-size:14.5px;}
+  .mission{padding:14px 20px;}
+  #missionText{font-size:17px;}
+  .budget{font-size:14px; padding:8px 16px;}
+  .cand{min-height:210px; padding:18px;}
+  .cand-name{font-size:17px;}
+  .cand-maker{font-size:12px;}
+  .cand-price{font-size:19px;}
+  .cand-note{font-size:13px;}
+  .tag{font-size:11px; padding:3px 8px;}
+  .grid-wrap{max-width:700px; max-height:560px;}
+  .cell .tile-ic{font-size:44px;}
+  .cell .tile-nm{font-size:13px;}
+  #coach{padding:9px 16px 9px 10px; min-height:72px;}
+  #coach .c-text{font-size:15px;}
+  #coach img{width:58px;}
+  .values p{font-size:14px;}
+  .summary-row{font-size:14px; padding:10px 14px;}
+  .slot{width:32px; height:32px;}
+  .timerbar{height:30px;}
+  #timerText{font-size:15px;}
+}
+
+/* ============ 짧은 화면 대응 ============ */
+@media (max-height:720px){
+  .duo{height:clamp(110px,26vh,200px);}
+  h1{font-size:clamp(22px,4.6vw,34px);}
+  .title-sub{font-size:11.5px;}
+  .btn{min-height:48px; padding:11px 16px;}
+  .btn.big{min-height:52px; padding:13px 28px;}
+  #coach{min-height:54px; padding:5px 10px 5px 6px;}
+  .doc-fields li{padding:6px 9px;}
+  .stage-head h2{font-size:clamp(14px,2.6vw,20px);}
+  .mission{padding:8px 12px;}
+  .cand{padding:8px 10px;}
+  .summary-row{padding:6px 10px;}
+}
+@media (max-height:600px) and (orientation:landscape){
+  .stage-tag{display:none;}
+  .stage-head h2{font-size:15px; margin:0;}
+  .pips{margin-top:3px;}
+  .pips i{width:20px; height:4px;}
+  .doc-card{flex:0 0 auto; padding:7px 12px;}
+  .doc-card h3{font-size:17px; margin:1px 0;}
+  #coach{min-height:44px; padding:3px 10px 3px 5px;}
+  #coach img{width:36px;}
+  #coach .c-text{font-size:11px;}
+  .doc-top{font-size:10px;}
+  .doc-meta{display:none;}
+  .doc-fields{gap:3px; margin-top:2px;}
+  .doc-fields li{padding:3px 8px; font-size:11.5px;}
+  .actions .btn{min-height:40px; padding:8px 10px; font-size:14px;}
+  .verdict{padding:6px 10px; gap:4px;}
+  .verdict .btn{min-height:36px; padding:6px 14px;}
+  .mission{padding:6px 10px;}
+  .cand{min-height:0; padding:7px 9px;}
+  .cand-note{display:none;}
+  .duo{height:clamp(88px,21vh,150px);}
+  h1{font-size:clamp(19px,3.4vw,26px);}
+  .title-sub{display:none;}
+  .title-wrap{gap:5px;}
+  .howto{font-size:10px;}
+  .howto span{padding:3px 8px;}
+  .btn.big{min-height:42px; padding:9px 22px; font-size:16px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .duo,.emergency,.grade-badge,.confetti i{animation:none !important;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header id="hud">
+    <div class="hud-brand">🏛️ AI <span>QUEST</span></div>
+    <div class="hud-stage" id="hudStage">2050 AI 조달 마스터</div>
+    <div class="hud-score">점수 <b id="hudScore">0</b></div>
+    <button class="mute" id="muteBtn" aria-label="소리 켜기/끄기" title="소리 켜기/끄기">🔊</button>
+  </header>
+
+  <main>
+    <!-- ===== 타이틀 ===== -->
+    <section id="screen-title" class="screen active">
+      <div class="title-wrap">
+        <span class="chip">2026 조달청 AI 게임 · AI QUEST</span>
+        <h1>나르미·달이의<br><span class="glow">2050 AI 조달 마스터</span></h1>
+        <p class="title-sub">입찰 서류 심사부터 친환경 제품 매칭, 재난 긴급 조달까지!<br>3개 스테이지 · 약 1분 30초</p>
+        <img class="duo" src="./assets/duo.png" alt="조달청 캐릭터 나르미와 달이">
+        <div class="start-row">
+          <button class="btn primary big" id="startBtn">게임 시작 ▶</button>
+        </div>
+        <div class="howto">
+          <span>🖱️ 클릭·터치로 선택</span>
+          <span>AI 스캔으로 서류 검증</span>
+          <span>⏱️ 15초 골든타임</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 스테이지 1 ===== -->
+    <section id="screen-stage1" class="screen">
+      <div class="screen-body">
+        <div class="stage-head">
+          <span class="stage-tag">STAGE 1 · 공정·투명 조달</span>
+          <h2>AI 서류 스캐너 <em>— 유령·위조 업체를 가려내라!</em></h2>
+          <div class="pips" id="s1pips"><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="doc-card" id="docCard">
+          <div class="scan-sweep"></div>
+          <div class="doc-top">
+            <span class="doc-label">나라장터 입찰 서류</span>
+            <span class="doc-round" id="docRound">1 / 3</span>
+          </div>
+          <h3><span id="docCompany">(주)한빛테크</span><span class="seal" id="docSeal">심사 대기</span></h3>
+          <div class="doc-meta" id="docMeta"></div>
+          <ul class="doc-fields" id="docFields"></ul>
+        </div>
+
+        <div class="actions" id="s1actions">
+          <button class="btn scan" id="scanBtn">🔍 AI 스캔</button>
+          <button class="btn approve" id="approveBtn" disabled>승인 ✅</button>
+          <button class="btn reject" id="rejectBtn" disabled>반려 ❌</button>
+        </div>
+
+        <div class="verdict" id="s1verdict">
+          <div class="verdict-title" id="s1vTitle"></div>
+          <div class="verdict-why" id="s1vWhy"></div>
+          <button class="btn ghost" id="s1next">다음 서류 ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 스테이지 2 ===== -->
+    <section id="screen-stage2" class="screen">
+      <div class="screen-body">
+        <div class="stage-head">
+          <span class="stage-tag">STAGE 2 · 혁신·친환경 조달</span>
+          <h2>2050 나라장터 AI 매칭 <em>— 딱 맞는 제품을 골라라!</em></h2>
+          <div class="pips" id="s2pips"><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="mission">
+          <div class="mission-icon">📋</div>
+          <div class="mission-txt">
+            <div class="mission-label">수요기관 요청</div>
+            <div id="missionText">어린이집 실내 공기질 개선용 친환경·혁신 제품이 필요해요.</div>
+          </div>
+          <div class="budget" id="missionBudget">예산 500만원</div>
+        </div>
+
+        <div class="candidates" id="candidates"></div>
+      </div>
+
+      <div class="stage-done" id="s2done">
+        <div class="done-card">
+          <div style="font-size:38px" id="s2doneIcon">✅</div>
+          <h3 id="s2doneTitle">정확한 매칭!</h3>
+          <p id="s2doneText"></p>
+          <button class="btn primary" id="s2next">다음 미션 ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 스테이지 3 ===== -->
+    <section id="screen-stage3" class="screen">
+      <div class="screen-body">
+        <div class="stage-head">
+          <span class="stage-tag">STAGE 3 · 신속·재난 조달</span>
+          <h2>골든타임 15초! <em>긴급 물자 급파</em></h2>
+        </div>
+
+        <div class="emergency">
+          <span>⚠️</span><b>폭설 경보 — 산간마을 300세대 고립</b>
+        </div>
+
+        <div class="timerbar">
+          <div id="timerFill"></div>
+          <span id="timerText">15.0초</span>
+        </div>
+
+        <div class="gauge">
+          <span>🚚 보급 트럭</span>
+          <div class="slots" id="slots"></div>
+          <span id="gaugeText">0 / 5</span>
+        </div>
+
+        <div class="grid-wrap">
+          <div class="grid" id="itemGrid"></div>
+        </div>
+      </div>
+
+      <div class="stage-done" id="s3done">
+        <div class="done-card">
+          <div class="big-num" id="s3big">+0</div>
+          <h3 id="s3title">보급 완료!</h3>
+          <p id="s3text"></p>
+          <button class="btn primary" id="s3next">결과 보기 ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 결과 ===== -->
+    <section id="screen-result" class="screen">
+      <div class="result-wrap">
+        <div class="grade-badge" id="gradeBadge">S</div>
+        <div class="grade-name" id="gradeName">수석 조달관</div>
+        <div class="final-score">총점 <b id="finalScore">0</b>점</div>
+
+        <div class="summary" id="summary"></div>
+
+        <div class="values">
+          <b>조달청 핵심 가치</b>
+          <p><span>공정·투명</span> — AI가 입찰 서류를 교차 검증해 유령·위조 업체를 걸러냅니다.</p>
+          <p><span>혁신·친환경</span> — 혁신제품·녹색인증을 예산 안에서 가장 알맞게 연결합니다.</p>
+          <p><span>신속·재난</span> — 골든타임 안에 꼭 필요한 물자를 가장 먼저 보급합니다.</p>
+        </div>
+
+        <div class="result-btns">
+          <button class="btn primary" id="replayBtn">다시 플레이</button>
+          <button class="btn ghost" id="homeBtn">타이틀로</button>
+        </div>
+        <div class="foot-note">본 게임은 생성형 AI로 제작된 2026 조달청 AI 게임 공모전 출품작입니다.</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="coach">
+    <img id="coachImg" src="./assets/narumi.png" alt="나르미">
+    <div class="c-body">
+      <span class="c-name" id="coachName">나르미</span>
+      <span class="c-text" id="coachText">준비됐어요?</span>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* =========================================================
+   나르미·달이의 2050 AI 조달 마스터
+   - 단일 HTML + ./assets/ 이미지, 외부 라이브러리 없음
+   - 모든 효과음/BGM은 Web Audio API로 실시간 합성
+   ========================================================= */
+
+/* ---------- DOM ---------- */
+const $ = (id) => document.getElementById(id);
+const screens = {
+  title:  $('screen-title'),
+  s1:     $('screen-stage1'),
+  s2:     $('screen-stage2'),
+  s3:     $('screen-stage3'),
+  result: $('screen-result')
+};
+const hudStage = $('hudStage');
+const hudScore = $('hudScore');
+const coach   = $('coach');
+const coachImg = $('coachImg');
+const coachName = $('coachName');
+const coachText = $('coachText');
+
+/* ---------- 상태 ---------- */
+const state = {
+  score: 0,
+  stage: 0,
+  s1: { round: 0, correct: 0, scanned: false, done: false, points: 0 },
+  s2: { round: 0, correct: 0, locked: false, points: 0 },
+  s3: { hits: 0, wrong: 0, points: 0, bonus: 0, ended: false, success: false }
+};
+const AVATAR = { narumi: './assets/narumi.png', dari: './assets/dari.png' };
+const NAME   = { narumi: '나르미', dari: '달이' };
+
+/* =========================================================
+   사운드 (Web Audio API 합성)
+   ========================================================= */
+const Sound = (function () {
+  let ctx = null, master = null, bgmGain = null, muted = false;
+  let bgmTimer = null, step = 0;
+
+  function init() {
+    if (ctx) return ctx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+    master = ctx.createGain();
+    master.gain.value = muted ? 0 : 0.55;
+    master.connect(ctx.destination);
+    bgmGain = ctx.createGain();
+    bgmGain.gain.value = 0.0;
+    bgmGain.connect(master);
+    return ctx;
+  }
+  function resume() {
+    init();
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+  }
+  function tone(opt) {
+    if (!ctx || muted) return;
+    const t0 = ctx.currentTime + (opt.delay || 0);
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = opt.type || 'sine';
+    osc.frequency.setValueAtTime(opt.freq, t0);
+    if (opt.to) osc.frequency.exponentialRampToValueAtTime(Math.max(30, opt.to), t0 + (opt.dur || 0.2));
+    const vol = opt.vol == null ? 0.16 : opt.vol;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + (opt.attack || 0.012));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + (opt.dur || 0.2));
+    osc.connect(g); g.connect(master);
+    osc.start(t0); osc.stop(t0 + (opt.dur || 0.2) + 0.03);
+  }
+  function noise(dur, vol) {
+    if (!ctx || muted) return;
+    const len = Math.floor(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    const src = ctx.createBufferSource();
+    const g = ctx.createGain(); g.gain.value = vol || 0.12;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.8;
+    src.buffer = buf; src.connect(bp); bp.connect(g); g.connect(master);
+    src.start();
+  }
+  const api = {
+    resume,
+    get muted() { return muted; },
+    toggle() {
+      muted = !muted;
+      if (master) master.gain.value = muted ? 0 : 0.55;
+      if (!muted) { resume(); }
+      return muted;
+    },
+    click() { tone({ freq: 620, to: 900, dur: 0.07, type: 'square', vol: 0.07 }); },
+    pop()   { tone({ freq: 880, to: 1320, dur: 0.09, type: 'triangle', vol: 0.1 }); },
+    scan() {
+      if (!ctx || muted) return;
+      tone({ freq: 260, to: 1400, dur: 0.42, type: 'sawtooth', vol: 0.055 });
+      tone({ freq: 520, to: 2400, dur: 0.4, type: 'sine', vol: 0.05, delay: 0.03 });
+      noise(0.3, 0.05);
+    },
+    correct() {
+      [523.25, 659.25, 783.99, 1046.5].forEach((f, i) =>
+        tone({ freq: f, dur: 0.24, type: 'triangle', vol: 0.12, delay: i * 0.075 }));
+      tone({ freq: 1568, dur: 0.5, type: 'sine', vol: 0.06, delay: 0.3 });
+    },
+    wrong() {
+      tone({ freq: 200, to: 96, dur: 0.42, type: 'sawtooth', vol: 0.1 });
+      tone({ freq: 150, to: 80, dur: 0.45, type: 'square', vol: 0.06, delay: 0.04 });
+    },
+    tick() { tone({ freq: 1250, dur: 0.05, type: 'square', vol: 0.055 }); },
+    pickup() {
+      tone({ freq: 740, to: 1180, dur: 0.11, type: 'triangle', vol: 0.11 });
+      tone({ freq: 1480, dur: 0.07, type: 'sine', vol: 0.05, delay: 0.06 });
+    },
+    miss() { tone({ freq: 180, to: 110, dur: 0.18, type: 'square', vol: 0.09 }); },
+    win() {
+      [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) =>
+        tone({ freq: f, dur: 0.4, type: 'triangle', vol: 0.11, delay: i * 0.12 }));
+      [261.63, 329.63, 392].forEach((f) =>
+        tone({ freq: f, dur: 1.1, type: 'sine', vol: 0.05, delay: 0.5 }));
+    },
+    /* BGM: 가벼운 신스 루프 (8분음표 16스텝) */
+    startBgm() {
+      init();
+      if (!ctx || bgmTimer) return;
+      const melody = [523.25, 659.25, 783.99, 659.25, 587.33, 783.99, 880.0, 783.99,
+                      523.25, 659.25, 880.0, 783.99, 659.25, 587.33, 523.25, 392.0];
+      const bass   = [130.81, 130.81, 174.61, 174.61, 196.0, 196.0, 130.81, 130.81];
+      bgmGain.gain.setTargetAtTime(0.16, ctx.currentTime, 1.2);
+      step = 0;
+      bgmTimer = setInterval(() => {
+        if (!ctx || muted) return;
+        const s = step % 16;
+        if (s % 2 === 0) {
+          const t0 = ctx.currentTime;
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = 'triangle'; o.frequency.value = melody[s];
+          g.gain.setValueAtTime(0.0001, t0);
+          g.gain.exponentialRampToValueAtTime(0.11, t0 + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
+          o.connect(g); g.connect(bgmGain);
+          o.start(t0); o.stop(t0 + 0.36);
+        }
+        if (s % 4 === 0) {
+          const t0 = ctx.currentTime;
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = 'sine'; o.frequency.value = bass[(step >> 2) % 8];
+          g.gain.setValueAtTime(0.0001, t0);
+          g.gain.exponentialRampToValueAtTime(0.2, t0 + 0.05);
+          g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.6);
+          o.connect(g); g.connect(bgmGain);
+          o.start(t0); o.stop(t0 + 0.65);
+        }
+        step++;
+      }, 232);
+    },
+    stopBgm() {
+      if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+      if (bgmGain && ctx) bgmGain.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+    }
+  };
+  return api;
+})();
+
+/* 음소거 토글 */
+const muteBtn = $('muteBtn');
+muteBtn.addEventListener('click', () => {
+  Sound.resume();
+  const m = Sound.toggle();
+  muteBtn.textContent = m ? '🔇' : '🔊';
+  muteBtn.classList.toggle('off', m);
+});
+
+/* =========================================================
+   공용 UI
+   ========================================================= */
+function showScreen(key) {
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[key].classList.add('active');
+  coach.classList.toggle('show', key !== 'title' && key !== 'result');
+}
+function say(who, text) {
+  coachImg.src = AVATAR[who];
+  coachImg.alt = NAME[who];
+  coachName.textContent = NAME[who];
+  coachText.textContent = text;
+  coach.classList.remove('talking');
+  void coach.offsetWidth;
+  coach.classList.add('talking');
+  setTimeout(() => coach.classList.remove('talking'), 600);
+}
+function addScore(n) {
+  if (!n) return;
+  const from = state.score;
+  state.score = Math.max(0, state.score + n);
+  animateScore(from, state.score);
+}
+function animateScore(from, to) {
+  const start = performance.now(), dur = 420;
+  (function frame(now) {
+    const p = Math.min(1, (now - start) / dur);
+    const v = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+    hudScore.textContent = v;
+    if (p < 1) requestAnimationFrame(frame);
+    else hudScore.textContent = to;
+  })(performance.now());
+}
+function floatText(x, y, txt, minus) {
+  const el = document.createElement('div');
+  el.className = 'float-pt' + (minus ? ' minus' : '');
+  el.textContent = txt;
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 850);
+}
+function renderPips(el, total, done, cur) {
+  el.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const p = document.createElement('i');
+    if (i < done) p.className = 'on';
+    else if (i === cur) p.className = 'now';
+    el.appendChild(p);
+  }
+}
+function confetti() {
+  const wrap = document.createElement('div');
+  wrap.className = 'confetti';
+  const colors = ['#5FE3FF', '#0EA5E9', '#ffd24a', '#2ee08a', '#ff8ba0', '#ffffff'];
+  for (let i = 0; i < 40; i++) {
+    const b = document.createElement('i');
+    b.style.left = Math.random() * 100 + 'vw';
+    b.style.background = colors[i % colors.length];
+    b.style.animationDuration = (1.8 + Math.random() * 1.6) + 's';
+    b.style.animationDelay = (Math.random() * 0.6) + 's';
+    b.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+    wrap.appendChild(b);
+  }
+  document.body.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 4000);
+}
+
+/* =========================================================
+   스테이지 1 데이터 — 공정·투명 조달
+   ========================================================= */
+const S1 = [
+  {
+    company: '(주)한빛테크',
+    meta: '업종 조명기구 제조 · 대표 김정우 · 직원 18명',
+    fields: [
+      { k: '납품 실적', v: '최근 5년 47건 · 계약 이행률 100%', ok: true },
+      { k: '가격 적정성', v: '예정가 대비 96% · 원가 분석 적정', ok: true },
+      { k: '서류 진위', v: '사업자등록·인감증명 모두 정상', ok: true }
+    ],
+    verdict: 'approve',
+    seal: '적격',
+    okLine: ['narumi', '실적·가격·서류 모두 깨끗해요! 승인!'],
+    noLine: ['dari', '문제가 하나도 없는데… 반려하면 안 돼요!'],
+    why: '실적도 가격도 서류도 정상인 건실한 중소기업입니다. 이런 업체가 공정한 경쟁의 출발점이에요.'
+  },
+  {
+    company: '(주)고스트트레이딩',
+    meta: '업종 종합유통 · 대표 박성현 · 직원 0명',
+    fields: [
+      { k: '납품 실적', v: '최근 5년 0건 · 신규 법인', ok: false },
+      { k: '가격 적정성', v: '예정가 대비 45% · 비정상 저가', ok: false },
+      { k: '서류 진위', v: '등록 주소지에 사업장 없음 · 직원 0명', ok: false }
+    ],
+    verdict: 'reject',
+    seal: '부적격',
+    okLine: ['dari', '사무실도 직원도 실적도 없어요. 유령업체예요!'],
+    noLine: ['narumi', '이런 업체를 승인하면 계약이 통째로 사라져요!'],
+    why: '사업장·직원·실적이 모두 없는 유령업체입니다. 초저가로만 입찰해 납품을 회피하려는 전형적인 수법이에요.'
+  },
+  {
+    company: '(주)다솜산업',
+    meta: '업종 사무용 가구 · 대표 이하늘 · 직원 6명',
+    fields: [
+      { k: '납품 실적', v: '최근 5년 12건 · 증명서 발급번호 조회 불가', ok: false },
+      { k: '가격 적정성', v: '예정가 대비 28% · 원가 이하 덤핑', ok: false },
+      { k: '서류 진위', v: '인감증명서 위조 흔적 · 대표 서명 불일치', ok: false }
+    ],
+    verdict: 'reject',
+    seal: '부적격',
+    okLine: ['narumi', '서류 위조와 덤핑까지… 반려가 정답이에요!'],
+    noLine: ['dari', '인감증명서가 위조됐어요. 승인하면 큰일 나요!'],
+    why: '실적 증명서와 인감증명서가 위조됐고, 원가 이하의 덤핑 가격입니다. 공정한 입찰을 무너뜨리는 불법 행위예요.'
+  }
+];
+
+/* ---------- 스테이지 1 ---------- */
+function startStage1() {
+  state.stage = 1;
+  state.score = 0;
+  hudScore.textContent = '0';
+  state.s1 = { round: 0, correct: 0, scanned: false, done: false, points: 0 };
+  state.s2 = { round: 0, correct: 0, locked: false, points: 0 };
+  state.s3 = { hits: 0, wrong: 0, points: 0, bonus: 0, ended: false, success: false };
+  hudStage.textContent = 'STAGE 1 · AI 서류 스캐너';
+  showScreen('s1');
+  renderS1();
+  say('narumi', '입찰 서류가 도착했어요. 먼저 AI 스캔을 눌러 검증해 보세요!');
+}
+function renderS1() {
+  const r = S1[state.s1.round];
+  state.s1.scanned = false;
+  state.s1.done = false;
+
+  $('docRound').textContent = (state.s1.round + 1) + ' / ' + S1.length;
+  $('docCompany').textContent = r.company;
+  $('docMeta').textContent = r.meta;
+  const seal = $('docSeal');
+  seal.textContent = '심사 대기';
+  seal.className = 'seal';
+
+  const ul = $('docFields');
+  ul.innerHTML = '';
+  r.fields.forEach(f => {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="k">' + f.k + '</span><span class="v">■■■■■■■■</span><span class="flag">·</span>';
+    ul.appendChild(li);
+  });
+
+  $('scanBtn').disabled = false;
+  $('approveBtn').disabled = true;
+  $('rejectBtn').disabled = true;
+  $('s1actions').style.display = '';
+  $('s1verdict').classList.remove('show', 'good', 'bad');
+  renderPips($('s1pips'), S1.length, state.s1.round, state.s1.round);
+}
+function doScan() {
+  if (state.s1.scanned || state.s1.done) return;
+  state.s1.scanned = true;
+  Sound.scan();
+  const card = $('docCard');
+  card.classList.remove('scanning');
+  void card.offsetWidth;
+  card.classList.add('scanning');
+
+  const r = S1[state.s1.round];
+  const lis = Array.from($('docFields').children);
+  lis.forEach((li, i) => {
+    setTimeout(() => {
+      const f = r.fields[i];
+      li.classList.add('revealed');
+      li.classList.add(f.ok ? 'good' : 'warn');
+      li.querySelector('.v').textContent = f.v;
+      li.querySelector('.flag').textContent = f.ok ? '✅' : '⚠️';
+      Sound.tick();
+    }, 120 + i * 260);
+  });
+
+  setTimeout(() => {
+    card.classList.remove('scanning');
+    $('approveBtn').disabled = false;
+    $('rejectBtn').disabled = false;
+    $('scanBtn').disabled = true;
+    const bad = r.fields.filter(f => !f.ok).length;
+    say(bad ? 'narumi' : 'dari', bad
+      ? '위험 신호 ' + bad + '개를 찾았어요! 승인할까요, 반려할까요?'
+      : '세 항목 모두 정상이에요. 어떻게 판단할까요?');
+  }, 1050);
+}
+function decideS1(choice) {
+  if (!state.s1.scanned || state.s1.done) return;
+  state.s1.done = true;
+  const r = S1[state.s1.round];
+  const correct = choice === r.verdict;
+
+  $('approveBtn').disabled = true;
+  $('rejectBtn').disabled = true;
+
+  const seal = $('docSeal');
+  seal.textContent = r.seal;
+  seal.className = 'seal' + (r.verdict === 'approve' ? ' ok' : '');
+
+  if (correct) {
+    state.s1.correct++;
+    state.s1.points += 100;
+    addScore(100);
+    Sound.correct();
+    say(r.okLine[0], r.okLine[1]);
+  } else {
+    Sound.wrong();
+    say(r.noLine[0], r.noLine[1]);
+  }
+
+  const v = $('s1verdict');
+  v.classList.add('show', correct ? 'good' : 'bad');
+  $('s1vTitle').textContent = correct ? '정답! +100점' : '아쉬워요! 정답은 ' + (r.verdict === 'approve' ? '승인 ✅' : '반려 ❌');
+  $('s1vWhy').textContent = r.why;
+  $('s1actions').style.display = 'none';
+  $('s1next').textContent = state.s1.round < S1.length - 1 ? '다음 서류 ▶' : 'STAGE 2로 ▶';
+}
+function nextS1() {
+  Sound.click();
+  state.s1.round++;
+  if (state.s1.round >= S1.length) {
+    renderPips($('s1pips'), S1.length, S1.length, -1);
+    startStage2();
+  } else {
+    renderS1();
+    say('dari', '다음 서류예요. AI 스캔으로 꼼꼼히 확인해 봐요!');
+  }
+}
+
+/* =========================================================
+   스테이지 2 데이터 — 혁신·친환경 조달
+   ========================================================= */
+const S2 = [
+  {
+    mission: '어린이집 실내 공기질 개선용 친환경·혁신 제품이 필요해요.',
+    budget: '예산 500만원',
+    icon: '🧸',
+    cards: [
+      { ic: '🌿', name: '그린에어 공기청정기 GA-200', maker: '(주)그린에어',
+        tags: [['혁신제품', 'on'], ['녹색기술인증', 'on']], price: '480만원', budgetOk: '예산 내',
+        note: '어린이집용 저소음·헤파13 필터, 인증 완비', ok: true },
+      { ic: '🌀', name: '클린텍 공기청정기 CT-9', maker: '(주)클린텍',
+        tags: [['혁신제품', 'no'], ['녹색인증', 'no']], price: '320만원', budgetOk: '예산 내',
+        note: '가격은 싸지만 혁신·녹색 인증이 없어요', ok: false },
+      { ic: '🏭', name: '에어로 산업용 공기정화기 AR-500', maker: '(주)에어로텍',
+        tags: [['혁신제품', 'on'], ['녹색인증', 'on']], price: '920만원', budgetOk: '예산 초과',
+        note: '성능은 좋지만 예산을 420만원 넘어요', ok: false }
+    ],
+    answer: 0,
+    why: '혁신제품·녹색기술인증을 모두 갖추고 예산(500만원) 안에 들어오는 유일한 제품은 그린에어 GA-200입니다.',
+    okLine: ['dari', '인증도 예산도 딱 맞았어요! 어린이집에 바로 설치!'],
+    noLine: ['narumi', '인증이나 예산 중 하나가 어긋났어요. 조건을 다시 봐요!']
+  },
+  {
+    mission: '산불 조기 감지 AI 드론을 도입하려고 해요. 예산은 4,000만원입니다.',
+    budget: '예산 4,000만원',
+    icon: '🔥',
+    cards: [
+      { ic: '🚁', name: '스카이센서 화재감지 AI드론 SS-1', maker: '(주)스카이센서',
+        tags: [['혁신제품', 'on'], ['열화상 AI 감지', 'on']], price: '3,800만원', budgetOk: '예산 내',
+        note: '연기·열원 3초 내 자동 감지, 산불 대응 인증', ok: true },
+      { ic: '📷', name: '드론플러스 촬영드론 DP-4K', maker: '(주)드론플러스',
+        tags: [['혁신제품', 'no'], ['AI 감지', 'no']], price: '1,900만원', budgetOk: '예산 내',
+        note: '촬영 전용이라 화재 감지 기능이 없어요', ok: false },
+      { ic: '🛰️', name: '파이어가드 프리미엄 FD-X', maker: '(주)파이어가드',
+        tags: [['혁신제품', 'on'], ['AI 감지', 'on']], price: '6,500만원', budgetOk: '예산 초과',
+        note: '감지 성능은 최고지만 예산을 2,500만원 넘어요', ok: false }
+    ],
+    answer: 0,
+    why: '열화상 AI 감지 성능과 혁신제품 인증을 갖추면서 예산 4,000만원 안에 들어오는 SS-1이 최적입니다.',
+    okLine: ['narumi', '골든타임을 지켜 줄 드론이에요! 예산도 딱 맞았어요.'],
+    noLine: ['dari', '감지 기능이나 예산을 다시 확인해 봐요!']
+  },
+  {
+    mission: '취약계층 세대에 겨울철 고효율 난방기기를 지원하려고 해요. 예산은 400만원입니다.',
+    budget: '예산 400만원',
+    icon: '❄️',
+    cards: [
+      { ic: '🔥', name: '온기온돌 고효율 온수매트 OG-1', maker: '(주)온기',
+        tags: [['에너지효율 1등급', 'on'], ['녹색제품', 'on']], price: '380만원', budgetOk: '예산 내',
+        note: '세대당 전기료 부담이 가장 적어요', ok: true },
+      { ic: '♨️', name: '핫윈드 가스보일러 HW-2', maker: '(주)핫윈드',
+        tags: [['효율 3등급', 'no'], ['설치비 별도', 'no']], price: '300만원', budgetOk: '예산 내',
+        note: '배관 공사비가 따로 들어 지원 예산을 넘어요', ok: false },
+      { ic: '🏭', name: '테크히터 산업용 전기히터 TH-9', maker: '(주)테크히터',
+        tags: [['산업용', 'no'], ['고전력', 'no']], price: '620만원', budgetOk: '예산 초과',
+        note: '공장용이라 가정 설치가 불가능해요', ok: false }
+    ],
+    answer: 0,
+    why: '에너지효율 1등급·녹색제품 인증을 갖추고 예산 400만원 안에서 취약계층 세대에 바로 지원할 수 있는 제품은 OG-1입니다.',
+    okLine: ['dari', '따뜻한 겨울 선물이에요! 조건을 전부 만족했어요.'],
+    noLine: ['narumi', '효율·설치·예산을 한 번 더 따져 봐요!']
+  }
+];
+
+/* ---------- 스테이지 2 ---------- */
+function startStage2() {
+  state.stage = 2;
+  state.s2 = { round: 0, correct: 0, locked: false, points: 0 };
+  hudStage.textContent = 'STAGE 2 · AI 매칭';
+  showScreen('s2');
+  renderS2();
+  say('narumi', '수요기관의 요청이에요. 인증과 예산을 모두 만족하는 제품을 골라 주세요!');
+}
+function renderS2() {
+  const r = S2[state.s2.round];
+  state.s2.locked = false;
+  $('missionText').textContent = r.mission;
+  $('missionBudget').textContent = r.budget;
+  renderPips($('s2pips'), S2.length, state.s2.round, state.s2.round);
+  $('s2done').classList.remove('show');
+
+  const wrap = $('candidates');
+  wrap.innerHTML = '';
+  r.cards.forEach((c, i) => {
+    const b = document.createElement('button');
+    b.className = 'cand';
+    b.type = 'button';
+    b.dataset.i = i;
+    b.innerHTML =
+      '<span class="pick-mark"></span>' +
+      '<div class="cand-top"><span class="cand-ic">' + c.ic + '</span>' +
+        '<div><div class="cand-name">' + c.name + '</div><div class="cand-maker">' + c.maker + '</div></div></div>' +
+      '<div class="tags">' + c.tags.map(t => '<span class="tag ' + t[1] + '">' + t[0] + '</span>').join('') + '</div>' +
+      '<div class="cand-price">' + c.price + ' <small class="' + (c.budgetOk === '예산 내' ? '' : '') + '">' + c.budgetOk + '</small></div>' +
+      '<div class="cand-note">' + c.note + '</div>';
+    b.addEventListener('click', () => pickS2(i, b));
+    wrap.appendChild(b);
+  });
+}
+function pickS2(i, btn) {
+  if (state.s2.locked) return;
+  state.s2.locked = true;
+  const r = S2[state.s2.round];
+  const correct = i === r.answer;
+  const cards = Array.from($('candidates').children);
+
+  cards.forEach((el, idx) => {
+    el.disabled = true;
+    if (idx === r.answer) { el.classList.add('win'); el.querySelector('.pick-mark').textContent = '✅'; }
+    else el.classList.add('dim');
+  });
+  if (!correct) { btn.classList.add('bad'); btn.querySelector('.pick-mark').textContent = '❌'; }
+
+  if (correct) {
+    state.s2.correct++;
+    state.s2.points += 100;
+    addScore(100);
+    Sound.correct();
+    say(r.okLine[0], r.okLine[1]);
+  } else {
+    Sound.wrong();
+    say(r.noLine[0], r.noLine[1]);
+  }
+
+  $('s2doneIcon').textContent = correct ? '✅' : '🔍';
+  $('s2doneTitle').textContent = correct ? '정확한 매칭! +100점' : '아쉬워요! 정답은 위의 초록 카드';
+  $('s2doneText').textContent = r.why;
+  $('s2next').textContent = state.s2.round < S2.length - 1 ? '다음 미션 ▶' : 'STAGE 3로 ▶';
+  setTimeout(() => $('s2done').classList.add('show'), correct ? 700 : 500);
+}
+function nextS2() {
+  Sound.click();
+  state.s2.round++;
+  if (state.s2.round >= S2.length) {
+    renderPips($('s2pips'), S2.length, S2.length, -1);
+    startStage3();
+  } else {
+    renderS2();
+    say('dari', '다음 수요기관이 기다려요. 조건을 하나씩 맞춰 봐요!');
+  }
+}
+
+/* =========================================================
+   스테이지 3 — 신속·재난 조달
+   ========================================================= */
+const RELIEF = [
+  { ic: '⚡', nm: '발전기' },
+  { ic: '🧣', nm: '방한담요' },
+  { ic: '⛑️', nm: '구급상자' },
+  { ic: '💧', nm: '생수' },
+  { ic: '🔦', nm: '손전등' }
+];
+const JUNK = [
+  { ic: '🎮', nm: '게임기' },
+  { ic: '🎁', nm: '장식품' },
+  { ic: '💄', nm: '화장품' },
+  { ic: '🧸', nm: '인형' },
+  { ic: '⛳', nm: '골프채' },
+  { ic: '🍰', nm: '케이크' },
+  { ic: '📺', nm: 'TV' }
+];
+
+const s3 = {
+  raf: null, spawnTimer: null, cells: [], tiles: [], startAt: 0,
+  duration: 15000, remaining: 15, lastTick: 15, running: false
+};
+
+function buildStage3() {
+  const grid = $('itemGrid');
+  grid.innerHTML = '';
+  s3.cells = [];
+  s3.tiles = [];
+  for (let i = 0; i < 9; i++) {
+    const c = document.createElement('div');
+    c.className = 'cell';
+    c.dataset.i = i;
+    c.addEventListener('click', (ev) => hitCell(i, ev));
+    grid.appendChild(c);
+    s3.cells.push(c);
+    s3.tiles.push(null);
+  }
+  const slots = $('slots');
+  slots.innerHTML = '';
+  for (let i = 0; i < 5; i++) slots.appendChild(document.createElement('span')).className = 'slot';
+}
+function startStage3() {
+  state.stage = 3;
+  state.s3 = { hits: 0, wrong: 0, points: 0, bonus: 0, ended: false, success: false };
+  hudStage.textContent = 'STAGE 3 · 긴급 물자 급파';
+  showScreen('s3');
+  $('s3done').classList.remove('show');
+  buildStage3();
+  $('timerFill').style.width = '100%';
+  $('timerFill').classList.remove('low');
+  $('timerText').textContent = '15.0초';
+  $('gaugeText').textContent = '0 / 5';
+  say('narumi', '폭설로 마을이 고립됐어요! 15초 안에 구호물자만 골라 탭하세요!');
+
+  s3.running = false;
+  s3.remaining = 15;
+  s3.lastTick = 15;
+  // 3-2-1 짧은 준비 후 시작
+  let n = 3;
+  $('timerText').textContent = '준비…';
+  const prep = setInterval(() => {
+    Sound.tick();
+    $('timerText').textContent = n + '';
+    n--;
+    if (n < 1) {
+      clearInterval(prep);
+      beginS3();
+    }
+  }, 550);
+}
+function beginS3() {
+  s3.running = true;
+  s3.startAt = performance.now();
+  $('timerText').textContent = '15.0초';
+  Sound.pop();
+  // 스폰: 620ms마다 빈 칸에 아이템
+  s3.spawnTimer = setInterval(spawnTile, 600);
+  spawnTile(); spawnTile();
+  s3.raf = requestAnimationFrame(tickS3);
+}
+function tickS3(now) {
+  if (!s3.running) return;
+  const elapsed = now - s3.startAt;
+  const left = Math.max(0, s3.duration - elapsed);
+  s3.remaining = left / 1000;
+  $('timerFill').style.width = (left / s3.duration * 100) + '%';
+  $('timerText').textContent = s3.remaining.toFixed(1) + '초';
+  $('timerFill').classList.toggle('low', s3.remaining <= 5);
+
+  const whole = Math.ceil(s3.remaining);
+  if (whole !== s3.lastTick) {
+    s3.lastTick = whole;
+    if (whole <= 5 && whole > 0) Sound.tick();
+  }
+  if (left <= 0) { endStage3(false); return; }
+  s3.raf = requestAnimationFrame(tickS3);
+}
+function spawnTile() {
+  if (!s3.running) return;
+  const free = [];
+  for (let i = 0; i < 9; i++) if (!s3.tiles[i]) free.push(i);
+  if (!free.length) return;
+  const idx = free[Math.floor(Math.random() * free.length)];
+  const relief = Math.random() < 0.58;
+  const item = relief
+    ? RELIEF[Math.floor(Math.random() * RELIEF.length)]
+    : JUNK[Math.floor(Math.random() * JUNK.length)];
+  const life = relief ? 1650 : 1400;
+
+  const tile = { relief: relief, item: item, id: Math.random() };
+  s3.tiles[idx] = tile;
+  const cell = s3.cells[idx];
+  cell.className = 'cell on ' + (relief ? 'relief' : 'junk');
+  cell.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;">' +
+    '<span class="tile-ic">' + item.ic + '</span><span class="tile-nm">' + item.nm + '</span></div>';
+
+  setTimeout(() => {
+    if (s3.tiles[idx] && s3.tiles[idx].id === tile.id) {
+      s3.tiles[idx] = null;
+      cell.className = 'cell';
+      cell.innerHTML = '';
+    }
+  }, life);
+}
+function hitCell(i, ev) {
+  if (!s3.running) return;
+  const tile = s3.tiles[i];
+  if (!tile) return;
+  const cell = s3.cells[i];
+  const rect = cell.getBoundingClientRect();
+  const x = ev.clientX || rect.left + rect.width / 2;
+  const y = ev.clientY || rect.top + rect.height / 2;
+
+  s3.tiles[i] = null;
+
+  if (tile.relief) {
+    state.s3.hits++;
+    state.s3.points += 60;
+    addScore(60);
+    Sound.pickup();
+    floatText(x, y, '+60', false);
+    cell.className = 'cell on relief hit';
+    cell.innerHTML = '<span class="tile-ic">📦</span><span class="tile-nm">보급!</span>';
+    setTimeout(() => { if (!s3.tiles[i]) { cell.className = 'cell'; cell.innerHTML = ''; } }, 260);
+
+    const slots = $('slots').children;
+    for (let k = 0; k < slots.length; k++) {
+      if (!slots[k].classList.contains('on')) { slots[k].classList.add('on'); slots[k].textContent = '✓'; break; }
+    }
+    $('gaugeText').textContent = Math.min(state.s3.hits, 5) + ' / 5';
+    if (state.s3.hits >= 5) { endStage3(true); }
+  } else {
+    state.s3.wrong++;
+    Sound.miss();
+    floatText(x, y, '-25', true);
+    addScore(-25);
+    cell.className = 'cell on junk miss';
+    setTimeout(() => { if (!s3.tiles[i]) { cell.className = 'cell'; cell.innerHTML = ''; } }, 300);
+  }
+}
+function endStage3(success) {
+  if (state.s3.ended) return;
+  state.s3.ended = true;
+  s3.running = false;
+  if (s3.raf) cancelAnimationFrame(s3.raf);
+  if (s3.spawnTimer) clearInterval(s3.spawnTimer);
+  s3.cells.forEach(c => { c.className = 'cell'; c.innerHTML = ''; });
+  s3.tiles = [null,null,null,null,null,null,null,null,null];
+
+  state.s3.success = success;
+  if (success) {
+    const bonus = Math.round(s3.remaining) * 20;
+    state.s3.bonus = bonus;
+    addScore(bonus);
+    Sound.win();
+    $('s3big').textContent = '+' + bonus;
+    $('s3title').textContent = '보급 완료! 남은 시간 보너스 +' + bonus;
+    $('s3text').textContent = '구호물자 ' + state.s3.hits + '종을 골든타임 안에 전달했어요. 잘못 고른 물건은 ' + state.s3.wrong + '개!';
+    say('dari', '완벽해요! 300세대에 따뜻한 물자가 닿았어요!');
+    confetti();
+  } else {
+    Sound.wrong();
+    $('s3big').textContent = state.s3.hits + ' / 5';
+    $('s3title').textContent = '시간 초과!';
+    $('s3text').textContent = '긴급 물자를 5종 채우지 못했어요. 다음엔 구호물자만 빠르게 골라 보아요!';
+    say('narumi', '시간이 다 됐어요… 그래도 ' + state.s3.hits + '종은 보냈어요!');
+  }
+  $('timerFill').style.width = '0%';
+  $('timerText').textContent = '0.0초';
+  setTimeout(() => $('s3done').classList.add('show'), 600);
+}
+
+/* =========================================================
+   결과
+   ========================================================= */
+function showResult() {
+  state.stage = 4;
+  hudStage.textContent = '결과 · 조달 마스터 등급';
+  showScreen('result');
+  coach.classList.remove('show');
+
+  const total = state.score;
+  let grade = 'B', gname = '새내기 조달관', gcolor = '#b9c9dc';
+  if (total >= 900) { grade = 'S'; gname = '수석 조달관'; }
+  else if (total >= 600) { grade = 'A'; gname = '베테랑 조달관'; }
+
+  const badge = $('gradeBadge');
+  badge.textContent = grade;
+  if (grade === 'A') badge.style.background = 'radial-gradient(circle at 32% 28%,#e6fbff,#8fe3ff 55%,#0EA5E9)';
+  if (grade === 'B') badge.style.background = 'radial-gradient(circle at 32% 28%,#f2f6fb,#b9c9dc 55%,#7e93ab)';
+  $('gradeName').textContent = gname;
+  $('finalScore').textContent = total;
+
+  const rows = [
+    { ic: '📑', name: 'STAGE 1 · AI 서류 스캐너', val: state.s1.correct + ' / ' + S1.length + ' 정확 · ' + state.s1.points + '점' },
+    { ic: '🌿', name: 'STAGE 2 · 나라장터 AI 매칭', val: state.s2.correct + ' / ' + S2.length + ' 정확 · ' + state.s2.points + '점' },
+    { ic: '🚚', name: 'STAGE 3 · 긴급 물자 급파', val: state.s3.hits + ' / 5 보급 · ' + (state.s3.points + state.s3.bonus) + '점' }
+  ];
+  const sum = $('summary');
+  sum.innerHTML = '';
+  rows.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'summary-row';
+    d.innerHTML = '<span class="s-ic">' + r.ic + '</span><span class="s-name">' + r.name + '</span><span class="s-val">' + r.val + '</span>';
+    sum.appendChild(d);
+  });
+
+  if (grade === 'S') { Sound.win(); confetti(); }
+  else if (grade === 'A') { Sound.correct(); }
+  else { Sound.pop(); }
+  say('narumi', '수고했어요! 결과를 확인해 보세요.');
+}
+
+/* =========================================================
+   이벤트 연결
+   ========================================================= */
+$('startBtn').addEventListener('click', () => {
+  Sound.resume();
+  Sound.startBgm();
+  Sound.click();
+  addScore(0);
+  hudScore.textContent = state.score;
+  startStage1();
+});
+$('scanBtn').addEventListener('click', () => { Sound.click(); doScan(); });
+$('approveBtn').addEventListener('click', () => { Sound.click(); decideS1('approve'); });
+$('rejectBtn').addEventListener('click', () => { Sound.click(); decideS1('reject'); });
+$('s1next').addEventListener('click', nextS1);
+$('s2next').addEventListener('click', nextS2);
+$('s3next').addEventListener('click', () => { Sound.click(); showResult(); });
+$('replayBtn').addEventListener('click', () => {
+  Sound.click();
+  state.score = 0; hudScore.textContent = '0';
+  startStage1();
+});
+$('homeBtn').addEventListener('click', () => {
+  Sound.click();
+  showScreen('title');
+  hudStage.textContent = '2050 AI 조달 마스터';
+  coach.classList.remove('show');
+});
+
+/* 모바일 더블탭 확대 방지 */
+document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
+
+/* 최초 상태 */
+hudScore.textContent = '0';
+</script>
+</body>
+</html>
